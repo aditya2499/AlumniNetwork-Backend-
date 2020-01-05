@@ -1,0 +1,5 @@
+exports.getPostByUser= ((req,res)=>{
+  
+    
+
+})
