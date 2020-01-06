@@ -20,7 +20,7 @@ exports.registerUser=((req, res) => {
    Name :Name ,FatherName : FatherName, MotherName : MotherName , Cgpa : Cgpa , Status : Status,WorkExperience :WorkExperience ,Type :Type,Year : Year,College : College,Subject : Subject
  })
  user.save().then( user=>{
-     console.log(user)
+     console.log(user);
  }).catch(err =>{
    console.log(err);
  })
@@ -28,13 +28,16 @@ exports.registerUser=((req, res) => {
 })
 
 exports.getUserData = ((req,res)=>{
-   console.log("inner");
+   //console.log("inner");
    if(req.body.Type === 'Alumni'){
-     console.log(req)
-     User.find({Name : req.body.Name}).then(userInfo =>{
-      console.log(userInfo)
-      if(userInfo.body.status==2)
-      res.status(200).send(userInfo);
+     //console.log(req)
+     User.findOne({ "Name" : req.body.Name}).then(userInfo =>{
+      //userInfo.json()
+      //console.log(userInfo.Status);
+      if(userInfo.Status){
+      console.log(userInfo._id)
+        res.status(200).json(userInfo);
+      }
       else res.status(500);  
    }).catch(err =>{
            console.log(err);

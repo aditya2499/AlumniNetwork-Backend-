@@ -3,16 +3,24 @@ const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 
 const postSchema= new Schema({
+   // author : {
+   //    id : ObjectId(),
+   //    name : String,
+   //    required : true
+   // },
    Name : {
-      type : String,
-      required : true
+      type : String
    },
    College : {
       type: String,
       required : true  
    },
+   Type:{
+      type: String,
+      required : true
+   },
    Date : {
-      type : String,
+      type : Date,
       required : true,
    },
    Content: {
@@ -26,7 +34,12 @@ const postSchema= new Schema({
    NoOfComments :{
       type: Number,
       default : 0
-   }
+   },
+   // Likes : {
+   //    type : [String],
+   //    required : false
+   // },
+   //Comment : {}
 
 })
 

@@ -27,7 +27,11 @@ app.use((req,res,next)=>{
     next();
 })
 const UserRoutes = require("./routes/UserRoutes.js");
+
+const PostRoutes = require("./routes/postRoutes.js");
 app.use(UserRoutes);
+
+app.use("/posts",PostRoutes);
 
   mongoose.connect('mongodb+srv://Ad03:KGdePorXHMW9jyNP@alumninetwork-dxjvt.mongodb.net/shop?retryWrites=true&w=majority').then(result =>{
   console.log('connected');  
