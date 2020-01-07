@@ -34,6 +34,6 @@ app.use(UserRoutes);
 app.use("/posts",PostRoutes);
 
   mongoose.connect('mongodb://localhost:27017/AlumniBackend').then(result =>{
-  console.log('connected');  
+  console.log('connected to port 8080');  
   app.listen(8080);
   })

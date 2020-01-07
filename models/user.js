@@ -51,7 +51,7 @@ const userSchema = new Schema({
     required : true
    },
    Email : {
-      type : Number,
+      type : String,
       required : true
    },
    tokens:[{
@@ -69,11 +69,12 @@ const userSchema = new Schema({
 userSchema.methods.generateAuthToken = function() {
    var newUser = this;
    var access = "auth";
-   var token = jwt.sign({_id:newUser._id.toHexString(),access},process.env.JWT_SECRET).toString();
-
+   var token = jwt.sign({_id:newUser._id.toHexString(),access},"bhargav").toString();
+   console.log('token',token);
    newUser.tokens.push({access,token});
-
-   return newUser.save.then(() => {
+   
+   console.log('newUser',newUser);
+   return newUser.save().then(() => {
       console.log('newUser');
       return token;
    });

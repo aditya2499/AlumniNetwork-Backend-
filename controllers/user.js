@@ -1,32 +1,43 @@
 const User = require('../models/user');
+const _ = require('lodash');
 
 exports.defaultpage = ((req,res)=>{
    console.log("sdv");
-})
+});
+
 exports.registerUser=((req, res) => {
    //console.log(request)
-  req.body.Status= 1;
-  const Name = req.body.Name;
-  const FatherName = req.body.FatherName;
-  const MotherName = req.body.MotherName;
-  const Cgpa = req.body.Cgpa;
-  const Status = req.body.Status;
-  const WorkExperience = req.body.WorkExperience;
-  const Type = req.body.type;
-  const Year = req.body.Year;
-  const College = req.body.College;
-  const Subject = req.body.Subject;
-  const Password = req.body.Password;
- const user = new User({
-   Name :Name ,FatherName : FatherName, MotherName : MotherName , Cgpa : Cgpa , Status : Status,WorkExperience :WorkExperience ,Type :Type,Year : Year,College : College,Subject : Subject,Password : Password 
- })
- user.save().then( user=>{
-     console.log(user);
- }).catch(err =>{
-   console.log(err);
- })
+  // req.body.Status= 1;
+  // const Name = req.body.Name;
+  // const FatherName = req.body.FatherName;
+  // const MotherName = req.body.MotherName;
+  // const Cgpa = req.body.Cgpa;
+  // const Status = req.body.Status;
+  // const WorkExperience = req.body.WorkExperience;
+  // const Type = req.body.type;
+  // const Year = req.body.Year;
+  // const College = req.body.College;
+  // const Subject = req.body.Subject;
+  // const Password = req.body.Password;
 
-})
+  var body = _.pick(req.body,['Name','FatherName','MotherName','Cgpa','WorkExperience','Type','Year','College','Subject','Password','Email']);
+ const user = new User(body);
+ user.Status = 1;
+ console.log('user',user);
+ user.generateAuthToken().then((token) => {
+  user.save().then( user=>{
+    res.header('x-auth',token).send(user);
+    console.log(user);
+}).catch(err =>{
+  res.status(400).send('error while saving the data');
+  console.log(err);
+});
+
+ }).catch((e) => {
+   res.status(400).send('Unable to get a token');
+ });
+
+});
 
 exports.getUserData = ((req,res)=>{
    //console.log("inner");
