@@ -1,13 +1,17 @@
 const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
-
+const ObjectId = Schema.Types.ObjectId;
 const postSchema= new Schema({
    // author : {
    //    id : ObjectId(),
    //    name : String,
    //    required : true
    // },
+   AuthorId: {
+       type : ObjectId,
+       ref : "User"
+   },
    Name : {
       type : String
    },
@@ -35,10 +39,10 @@ const postSchema= new Schema({
       type: Number,
       default : 0
    },
-   // Likes : {
-   //    type : [String],
-   //    required : false
-   // },
+   Likes : {
+      type : [ObjectId],
+      required : false
+   },
    //Comment : {}
 
 })

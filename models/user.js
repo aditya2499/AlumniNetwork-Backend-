@@ -7,6 +7,10 @@ const userSchema = new Schema({
       type : String,
       required : true 
    },
+   Password : {
+       type :String,
+       required : true
+   },
    Type : {
       type : String,
       reuired : true
@@ -42,6 +46,10 @@ const userSchema = new Schema({
    Status : {
     type : Number ,
     required : true
+   },
+   Email : {
+      type : Number,
+      required : true
    }
 })
 
