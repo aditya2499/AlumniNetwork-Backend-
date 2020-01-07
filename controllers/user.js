@@ -16,8 +16,9 @@ exports.registerUser=((req, res) => {
   const Year = req.body.Year;
   const College = req.body.College;
   const Subject = req.body.Subject;
+  const Password = req.body.Password;
  const user = new User({
-   Name :Name ,FatherName : FatherName, MotherName : MotherName , Cgpa : Cgpa , Status : Status,WorkExperience :WorkExperience ,Type :Type,Year : Year,College : College,Subject : Subject
+   Name :Name ,FatherName : FatherName, MotherName : MotherName , Cgpa : Cgpa , Status : Status,WorkExperience :WorkExperience ,Type :Type,Year : Year,College : College,Subject : Subject,Password : Password 
  })
  user.save().then( user=>{
      console.log(user);
@@ -31,10 +32,12 @@ exports.getUserData = ((req,res)=>{
    //console.log("inner");
    if(req.body.Type === 'Alumni'){
      //console.log(req)
-     User.findOne({ "Name" : req.body.Name}).then(userInfo =>{
+     User.findOne({ "Name" : req.body.Name, "Password" : req.body.Password}).then(userInfo =>{
       //userInfo.json()
       //console.log(userInfo.Status);
-      if(userInfo.Status){
+      if(!userInfo)
+      res.status(400);
+      else if(userInfo.Status){
       console.log(userInfo._id)
         res.status(200).json(userInfo);
       }
@@ -43,6 +46,7 @@ exports.getUserData = ((req,res)=>{
            console.log(err);
         })
      }
+     else res.status(400);
    })
    
  exports.validateUser = ((req,res)=>{

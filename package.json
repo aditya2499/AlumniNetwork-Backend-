@@ -9,7 +9,8 @@
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.15",
     "mongodb": "^3.4.1",
-    "mongoose": "^5.8.4"
+    "mongoose": "^5.8.4",
+    "ngrok": "^3.2.7"
   },
   "devDependencies": {
     "nodemon": "^2.0.2"
