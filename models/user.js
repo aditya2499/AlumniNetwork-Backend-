@@ -1,4 +1,7 @@
 const mongoose = require('mongoose');
+const jwt = require('jsonwebtoken');
+const _ = require('lodash');
+const bcrypt = require('bcryptjs');
 
 const Schema = mongoose.Schema;
 
@@ -42,7 +45,30 @@ const userSchema = new Schema({
    Status : {
     type : Number ,
     required : true
-   }
-})
+   },
+   tokens:[{
+      access:{
+         type:String,
+         required:true
+      },
+      token:{
+         type:String,
+         required:true
+      }
+   }]
+});
+
+userSchema.methods.generateAuthToken = function() {
+   var newUser = this;
+   var access = "auth";
+   var token = jwt.sign({_id:newUser._id.toHexString(),access},process.env.JWT_SECRET).toString();
+
+   newUser.tokens.push({access,token});
+
+   return newUser.save.then(() => {
+      console.log('newUser');
+      return token;
+   });
+};
 
 module.exports = mongoose.model('User',userSchema);

@@ -2,7 +2,7 @@
 
 const express = require('express');
 const mongoose = require('mongoose');
- const bodyParser = require('body-parser');
+const bodyParser = require('body-parser');
 // const _ = require('lodash');
  const path = require('path');
  const User = require('./models/user');
@@ -33,7 +33,7 @@ app.use(UserRoutes);
 
 app.use("/posts",PostRoutes);
 
-  mongoose.connect('mongodb+srv://Ad03:KGdePorXHMW9jyNP@alumninetwork-dxjvt.mongodb.net/shop?retryWrites=true&w=majority').then(result =>{
+  mongoose.connect('mongodb://localhost:27017/AlumniBackend').then(result =>{
   console.log('connected');  
   app.listen(8080);
   })
