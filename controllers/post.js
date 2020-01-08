@@ -1,5 +1,7 @@
 const Post = require("../models/post");
 const mongoose = require('mongoose');
+const Comments = require('../models/comment');
+const _ = require('lodash');
 mongoose.set('useFindAndModify', false);
 const Schema = mongoose.Schema;
 const ObjectId = mongoose.Types.ObjectId;
@@ -55,3 +57,12 @@ exports.LikesPost=((req,res) =>{
    })
 }) 
 
+exports.PostComment = ((req,res) =>{
+   var body = _.pick(req.body,["AuthorId","AuthorName","Text","TimeStamp"]);
+   const comment = new Comment(body);
+   Post.findOneAndUpdate({_id : ObjectId(req.body.Id)},{$inc : {"NoOfComments" : 1}, $push : {"Comments" : comment}},{new : true}).then(post =>{
+      console.log(post);
+      res.status(200).json(post);
+   })
+
+})

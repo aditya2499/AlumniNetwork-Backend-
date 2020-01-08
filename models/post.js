@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+const Comment = require('./comment');
 const Schema = mongoose.Schema;
 const ObjectId = mongoose.Types.ObjectId;
 const postSchema= new Schema({
@@ -43,8 +43,10 @@ const postSchema= new Schema({
       type : [ObjectId],
       required : false
    },
-   //Comment : {}
-
+   Comments : {
+      type : [Comment],
+      required : false
+   }
 })
 
 module.exports = mongoose.model("Post",postSchema);
