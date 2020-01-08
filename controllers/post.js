@@ -48,7 +48,7 @@ exports.LikesPost=((req,res) =>{
 
  })
  exports.UnlikePost = ((req,res)=>{
-   Post.findOneAndDelete({ _id : ObjectId(req.body.Id)},{$inc : {"NoOfLikes" : -1}, $pull :{"Likes" : ObjectId(req.body.UserId)}}).then(post =>{
+   Post.findOneAndUpdate({ _id : ObjectId(req.body.Id)},{$inc : {"NoOfLikes" : -1}, $pull :{"Likes" : ObjectId(req.body.UserId)}},{new : true}).then(post =>{
       console.log(post.NoOfLikes);
       console.log(post.Likes);
       res.status(200).json(post);
