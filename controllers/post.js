@@ -18,24 +18,28 @@ exports.getPostByCollege=((req,res) =>{
 })
 
 exports.createPost=((req,res) =>{
+   console.log(req.file);
+   console.log(req.body);
     const AuthorId = ObjectId (req.body.Id);
     const Name= req.body.Name;
     const College = req.body.College;
     const Date = req.body.Date;
-    const  Content = req.body.Content;
+    const Content = req.body.Content;
     const NoOfLikes = 0;
     const NoOfComments = 0
     const Type= req.body.Type;
     const Likes = [];
     const post= new Post({
-       AuthorId : AuthorId,Name : Name,College : College, Date : Date, Content : Content,NoOfComments : NoOfComments,NoOfLikes : NoOfLikes,Type : Type,Likes : Likes
-    })
+       AuthorId : AuthorId,Name : Name,College : College, Date : Date, Content : Content,
+       NoOfComments : NoOfComments,NoOfLikes : NoOfLikes,Type : Type,Likes : Likes,
+       postImage:req.file.path
+    });
     post.save().then(post =>{
        console.log(post);
        res.status(200).json(post);
     }).catch(err =>{
        console.log(err);
-       res.status(500);
+       res.status(500).send(err);
     })
 })
 
