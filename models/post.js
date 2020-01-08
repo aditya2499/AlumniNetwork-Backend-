@@ -16,16 +16,13 @@ const postSchema= new Schema({
       type : String
    },
    College : {
-      type: String,
-      required : true  
+      type: String 
    },
    Type:{
-      type: String,
-      required : true
+      type: String
    },
    Date : {
-      type : Date,
-      required : true,
+      type : String
    },
    Content: {
       type : String,
@@ -46,7 +43,12 @@ const postSchema= new Schema({
    Comments : {
       type : [Comment],
       required : false
+   },
+   postImage:{
+      type:String
    }
+   //Comment : {}
+
 })
 
 module.exports = mongoose.model("Post",postSchema);
