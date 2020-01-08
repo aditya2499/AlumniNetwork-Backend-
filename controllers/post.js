@@ -1,6 +1,6 @@
 const Post = require("../models/post");
 const mongoose = require('mongoose');
-
+mongoose.set('useFindAndModify', false);
 const Schema = mongoose.Schema;
 const ObjectId = mongoose.Types.ObjectId;
 exports.getPostByUser= ((req,res)=>{
@@ -18,7 +18,7 @@ exports.getPostByCollege=((req,res) =>{
 })
 
 exports.createPost=((req,res) =>{
-    const AuthorId = req.body.Id;
+    const AuthorId = ObjectId (req.body.Id);
     const Name= req.body.Name;
     const College = req.body.College;
     const Date = req.body.Date;
@@ -46,17 +46,12 @@ exports.LikesPost=((req,res) =>{
       res.status(200).json(post);
    })
 
-  
-
-//    Post.findOne({_id : ObjectId(req.body.Id)}).then(post =>{
-//        if(post.Likes.filter(like => like.toString() === req.body.userId).length > 0){
-//           res.
-//        }
-//    })
  })
-//  exports.UnlikePost = ((req,res)=>{
-//    Post.findOne({ _id : ObjectId(req.body.Id)}).then(post =>{
-//       Post.
-//    })
-// }) 
+ exports.UnlikePost = ((req,res)=>{
+   Post.findOneAndDelete({ _id : ObjectId(req.body.Id)},{$inc : {"NoOfLikes" : -1}, $pull :{"Likes" : ObjectId(req.body.UserId)}}).then(post =>{
+      console.log(post.NoOfLikes);
+      console.log(post.Likes);
+      res.status(200).json(post);
+   })
+}) 
 

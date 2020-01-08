@@ -12,4 +12,6 @@ router.post('/create_post',postController.createPost);
 
 router.post('/like_post',postController.LikesPost);
 
+router.post('/unlike_post',postController.UnlikePost);
+
 module.exports=router;
