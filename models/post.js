@@ -1,7 +1,7 @@
 const mongoose = require('mongoose');
 
 const Schema = mongoose.Schema;
-const ObjectId = Schema.Types.ObjectId;
+const ObjectId = mongoose.Types.ObjectId;
 const postSchema= new Schema({
    // author : {
    //    id : ObjectId(),
