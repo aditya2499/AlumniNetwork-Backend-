@@ -9,6 +9,6 @@ router.post('/validate_user',userController.validateUser);
 
 router.post('/get_user_data',userController.getUserData);
 
-router.get("/",userController.defaultpage )
+router.get("/",userController.defaultpage );
 
 module.exports=router;

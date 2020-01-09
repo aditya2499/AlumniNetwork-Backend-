@@ -35,9 +35,9 @@ app.use(UserRoutes);
 
 app.use("/posts",PostRoutes);
 
-  mongoose.connect('mongodb+srv://Ad03:KGdePorXHMW9jyNP@alumninetwork-dxjvt.mongodb.net/shop?retryWrites=true&w=majority').then(result =>{
+  mongoose.connect('mongodb://localhost:27017/AluminiBackend').then(result =>{
   //console.log('connected to port 8080');  
-  app.listen(8080,() =>{
-    console.log("Server up on port 8080");
-  })
-  })
+  app.listen(8080,(res) =>{
+    console.log('Server up on port 8080');
+  });
+  });
