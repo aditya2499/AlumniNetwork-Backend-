@@ -2,13 +2,26 @@ const Post = require("../models/post");
 const mongoose = require('mongoose');
 const Comments = require('../models/comment');
 const _ = require('lodash');
+const fs = require('fs');
+const path = require('path');
 mongoose.set('useFindAndModify', false);
 const Schema = mongoose.Schema;
+const {fileURLToPath }=require("url");
+const {dirname} = require("path");
 const ObjectId = mongoose.Types.ObjectId;
 exports.getPostByUser= ((req,res)=>{
     
-    Post.find({AuthorId : req.body.Id}).then(userPosts=>{
+   console.log(req.body);
+    Post.find({AuthorId : req.body.AuthorId}).then(userPosts=>{
        console.log(userPosts);
+       console.log(__dirname);
+      var temp = fs.readFileSync(path.join(__dirname ,'../uploads/1578504087845IMG_20191028_123337.jpg'));
+      console.log(temp);
+      temp.toString();
+      res.send(temp);
+      //  res.sendFile(__dirname + '/uploads/1578509051350Screenshot from 2019-12-26 23-10-51.png');
+      //  res.send(userPosts);
+       res.end();
     })
 })
 
@@ -61,12 +74,12 @@ exports.LikesPost=((req,res) =>{
    })
 }) 
 
-exports.PostComment = ((req,res) =>{
-   var body = _.pick(req.body,["AuthorId","AuthorName","Text","TimeStamp"]);
-   const comment = new Comment(body);
-   Post.findOneAndUpdate({_id : ObjectId(req.body.Id)},{$inc : {"NoOfComments" : 1}, $push : {"Comments" : comment}},{new : true}).then(post =>{
-      console.log(post);
-      res.status(200).json(post);
-   })
+// exports.PostComment = ((req,res) =>{
+//    var body = _.pick(req.body,["AuthorId","AuthorName","Text","TimeStamp"]);
+//    const comment = new Comment(body);
+//    Post.findOneAndUpdate({_id : ObjectId(req.body.Id)},{$inc : {"NoOfComments" : 1}, $push : {"Comments" : comment}},{new : true}).then(post =>{
+//       console.log(post);
+//       res.status(200).json(post);
+//    })
 
-})
+// })

@@ -40,10 +40,10 @@ const postSchema= new Schema({
       type : [ObjectId],
       required : false
    },
-   Comments : {
-      type : [Comment],
-      required : false
-   },
+   // Comments : {
+   //    type : [Comment],
+   //    required : false
+   // },
    postImage:{
       type:String
    }

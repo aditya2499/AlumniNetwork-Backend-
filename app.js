@@ -18,6 +18,8 @@ mongoose.Promise = global.Promise;
 //     console.log('connected');
 // })
  const app = express();
+//  app.use(express.static(__dirname,'./public'));
+// app.use(express.static(__dirname,'public'));
  app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json())
 app.use((req,res,next)=>{
@@ -35,7 +37,7 @@ app.use("/posts",PostRoutes);
 
   mongoose.connect('mongodb+srv://Ad03:KGdePorXHMW9jyNP@alumninetwork-dxjvt.mongodb.net/shop?retryWrites=true&w=majority').then(result =>{
   //console.log('connected to port 8080');  
-  app.listen(8080).then(res =>{
-    console.log('Server up on port 8080');
-  });
+  app.listen(8080,() =>{
+    console.log("Server up on port 8080");
+  })
   })
