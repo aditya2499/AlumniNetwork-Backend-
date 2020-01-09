@@ -26,11 +26,16 @@ exports.createPost=((req,res) =>{
    console.log(req.file);
    console.log(req.body);
 
-   console.log(path.join(__dirname,'../' + req.file.path));
+   console.log(__dirname);
+   var temp = fs.readFileSync(path.join(__dirname,'../' + req.file.path));
+   console.log(temp);
 
-   // console.log(__dirname);
-   // var temp = fs.readFileSync(__dirname  + '\\' + req.file.path);
-   // console.log(temp);
+   fs.unlink('F:\\Projects\\AlumniNetwork Backend\\uploads\\test.jpg',(err) => {
+      if(err){
+         console.log(err);
+      }
+      console.log('Deleted');
+   });
 
     const AuthorId = ObjectId (req.body.Id);
     const Name= req.body.Name;
@@ -41,14 +46,16 @@ exports.createPost=((req,res) =>{
     const NoOfComments = 0
     const Type= req.body.Type;
     const Likes = [];
+    var check = new Buffer.from(temp).toString('base64');
     const post= new Post({
        AuthorId : AuthorId,Name : Name,College : College, Date : Date, Content : Content,
        NoOfComments : NoOfComments,NoOfLikes : NoOfLikes,Type : Type,Likes : Likes,
-       postImage:req.file.path
+       postImage:req.file.path, ImageData:check
     });
     post.save().then(post =>{
        console.log(post);
-       res.status(200).json(post);
+       var check = new Buffer.from(post.ImageData.buffer);
+       res.status(200).json(check);
     }).catch(err =>{
        console.log(err);
        res.status(500).send(err);
