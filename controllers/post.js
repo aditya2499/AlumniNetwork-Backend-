@@ -1,5 +1,7 @@
 const Post = require("../models/post");
 const mongoose = require('mongoose');
+const fs = require('fs');
+
 mongoose.set('useFindAndModify', false);
 const Schema = mongoose.Schema;
 const ObjectId = mongoose.Types.ObjectId;
@@ -20,6 +22,9 @@ exports.getPostByCollege=((req,res) =>{
 exports.createPost=((req,res) =>{
    console.log(req.file);
    console.log(req.body);
+
+   fs.readFileSync(__dirname + '/uploads/' + req.path.filename);
+   
     const AuthorId = ObjectId (req.body.Id);
     const Name= req.body.Name;
     const College = req.body.College;
