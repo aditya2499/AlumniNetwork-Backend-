@@ -1,8 +1,9 @@
 const Post = require("../models/post");
 const mongoose = require('mongoose');
 const fs = require('fs');
+const path = require('path');
 
-const Comments = require('../models/comment');
+// const Comments = require('../models/comment');
 const _ = require('lodash');
 mongoose.set('useFindAndModify', false);
 const Schema = mongoose.Schema;
@@ -25,8 +26,12 @@ exports.createPost=((req,res) =>{
    console.log(req.file);
    console.log(req.body);
 
-   fs.readFileSync(__dirname + '/uploads/' + req.path.filename);
-   
+   console.log(path.join(__dirname,'../' + req.file.path));
+
+   // console.log(__dirname);
+   // var temp = fs.readFileSync(__dirname  + '\\' + req.file.path);
+   // console.log(temp);
+
     const AuthorId = ObjectId (req.body.Id);
     const Name= req.body.Name;
     const College = req.body.College;

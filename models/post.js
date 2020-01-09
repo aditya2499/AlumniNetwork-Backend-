@@ -3,11 +3,6 @@ const Comment = require('./comment');
 const Schema = mongoose.Schema;
 const ObjectId = mongoose.Types.ObjectId;
 const postSchema= new Schema({
-   // author : {
-   //    id : ObjectId(),
-   //    name : String,
-   //    required : true
-   // },
    AuthorId: {
        type : ObjectId,
        ref : "User"
@@ -40,10 +35,10 @@ const postSchema= new Schema({
       type : [ObjectId],
       required : false
    },
-   Comments : {
-      type : [Comment],
-      required : false
-   },
+   // Comments : {
+   //    type : [Comment],
+   //    required : false
+   // },
    postImage:{
       type:String
    }
