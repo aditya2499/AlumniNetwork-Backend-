@@ -30,7 +30,7 @@ const userSchema = new Schema({
        type : Number,
        required : true
    },
-   Subject : {
+   Branch : {
       type: String ,
       required : true
    },

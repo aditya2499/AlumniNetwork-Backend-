@@ -1,7 +1,8 @@
 const User = require('../models/user');
 const _ = require('lodash');
 const jwt = require('jsonwebtoken');
-const io = require('../socket').getIO();
+const io = require('../socket');
+
 
 exports.defaultpage = ((req,res)=>{
    console.log("sdv");
@@ -9,18 +10,16 @@ exports.defaultpage = ((req,res)=>{
 
 exports.registerUser=((req, res) => {
 
-  var body = _.pick(req.body,['Name','FatherName','MotherName','Cgpa','WorkExperience','Type','Year','College','Subject','Password','Email']);
+  var body = _.pick(req.body,['Name','FatherName','MotherName','Cgpa','WorkExperience','Type','Year','College','Branch','Password','Email']);
   const user = new User(body);
   user.Status = 1;
-//  console.log('user',user);
   user.generateAuthToken().then((token) => {
-   user.save().then( user=>{
-     io.emit('collegeNotf',{
-       user:user
-     });
-     res.set('x-auth',token).send(user);
-    // res.send(user);
-    console.log('bhargav',user);
+   user.save().then( user1=>{
+    
+      console.log(user1);
+      io.getIO().emit('notification',{user:user1});
+
+     res.set('x-auth',token).send(user1);
   }).catch(err =>{
   res.status(400).send('error while saving the data');
   console.log(err);
@@ -28,11 +27,14 @@ exports.registerUser=((req, res) => {
 
  }).catch((e) => {
    res.status(400).send('Unable to get a token');
+   console.log(e);
  });
 
 });
 
 exports.Login = ((req,res) => {
+
+  console.log(req.header('auth-x'));
 
  console.log(req.body);
 
