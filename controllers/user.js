@@ -19,6 +19,8 @@ exports.registerUser=((req, res) => {
       console.log(user1);
       io.getIO().emit('notification',{user:user1});
 
+      //io.to('college').emit('notification',{user:user1});
+
      res.set('x-auth',token).send(user1);
   }).catch(err =>{
   res.status(400).send('error while saving the data');
@@ -92,9 +94,9 @@ exports.getUserData = ((req,res)=>{
             return res.status(404).send();
         } 
 
-        io.emit('notification',{
-          user:user
-        });
+        io.emit('notification',{user:user});
+
+        // socket.to(user.Email).emit('an event', { some: 'data' });
 
      }).catch(err =>{
        console.log("error");

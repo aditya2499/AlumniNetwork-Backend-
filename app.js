@@ -42,6 +42,10 @@ mongoose.connect('mongodb://localhost:27017/AlumniBackend').then(result =>{
      io.on('connection',(socket) => {
        console.log('New Connection');
      });
+
+     io.on('disconnect',(socket) => {
+       console.log("Disconnected");
+     });
      
   });
 
