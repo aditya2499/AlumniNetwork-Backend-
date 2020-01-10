@@ -1,14 +1,18 @@
 const Post = require("../models/post");
 const mongoose = require('mongoose');
 const fs = require('fs');
-const path = require('path');
+//const path = require('path');
 
 // const Comments = require('../models/comment');
 const _ = require('lodash');
+//const fs = require('fs');
+const path = require('path');
 mongoose.set('useFindAndModify', false);
 const Schema = mongoose.Schema;
+const {fileURLToPath }=require("url");
+const {dirname} = require("path");
 const ObjectId = mongoose.Types.ObjectId;
-
+const Comment = require("../models/comment");
 
 exports.getPostByUser= ((req,res)=>{
     console.log(req.body);
@@ -52,11 +56,12 @@ exports.createPost=((req,res) =>{
     const NoOfComments = 0
     const Type= req.body.Type;
     const Likes = [];
+    const Comments =[];
     var check = new Buffer.from(temp).toString('base64');
     const post= new Post({
        AuthorId : AuthorId,Name : Name,College : College, Date : Date, Content : Content,
        NoOfComments : NoOfComments,NoOfLikes : NoOfLikes,Type : Type,Likes : Likes,
-       postImage:req.file.path, ImageData:check
+       postImage:req.file.path, ImageData:check, Comments : Comments
     });
     post.save().then(post =>{
        console.log(post);
@@ -90,6 +95,5 @@ exports.PostComment = ((req,res) =>{
    Post.findOneAndUpdate({_id : ObjectId(req.body.Id)},{$inc : {"NoOfComments" : 1}, $push : {"Comments" : comment}},{new : true}).then(post =>{
       console.log(post);
       res.status(200).json(post);
-   });
-
-});
+   })
+ })

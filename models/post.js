@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-const Comment = require('./comment');
+const Comment = require('./comment').Schema;
 const Schema = mongoose.Schema;
 const ObjectId = mongoose.Types.ObjectId;
 const postSchema= new Schema({
@@ -35,10 +35,10 @@ const postSchema= new Schema({
       type : [ObjectId],
       required : false
    },
-   // Comments : {
-   //    type : [Comment],
-   //    required : false
-   // },
+   Comments : {
+      type : [Comment],
+      required : false
+   },
    postImage:{
       type:String
    },
