@@ -1,34 +1,23 @@
 const User = require('../models/user');
 const _ = require('lodash');
+const jwt = require('jsonwebtoken');
 
 exports.defaultpage = ((req,res)=>{
    console.log("sdv");
 });
 
 exports.registerUser=((req, res) => {
-   //console.log(request)
-  // req.body.Status= 1;
-  // const Name = req.body.Name;
-  // const FatherName = req.body.FatherName;
-  // const MotherName = req.body.MotherName;
-  // const Cgpa = req.body.Cgpa;
-  // const Status = req.body.Status;
-  // const WorkExperience = req.body.WorkExperience;
-  // const Type = req.body.type;
-  // const Year = req.body.Year;
-  // const College = req.body.College;
-  // const Subject = req.body.Subject;
-  // const Password = req.body.Password;
 
   var body = _.pick(req.body,['Name','FatherName','MotherName','Cgpa','WorkExperience','Type','Year','College','Subject','Password','Email']);
- const user = new User(body);
- user.Status = 1;
- console.log('user',user);
- user.generateAuthToken().then((token) => {
-  user.save().then( user=>{
+  const user = new User(body);
+  user.Status = 1;
+//  console.log('user',user);
+  user.generateAuthToken().then((token) => {
+   user.save().then( user=>{
     res.header('x-auth',token).send(user);
-    console.log(user);
-}).catch(err =>{
+    // res.send(user);
+    console.log('bhargav',user);
+  }).catch(err =>{
   res.status(400).send('error while saving the data');
   console.log(err);
 });
@@ -36,6 +25,31 @@ exports.registerUser=((req, res) => {
  }).catch((e) => {
    res.status(400).send('Unable to get a token');
  });
+
+});
+
+exports.Login = ((req,res) => {
+
+ console.log(req.body);
+
+ var body = _.pick(req.body,['Email','Password']);
+  
+  // User.findByCredentials(body.Email,body.Password).then((newUser) => {
+    User.findOne({'Email':body.Email,'Password':body.Password}).then((newUser) => {   
+        
+        if(!newUser){
+          return res.status(400).send();
+        }
+        console.log(newUser);
+        var access = "auth";
+        var token =  jwt.sign({_id:newUser._id.toHexString(),access},"bhargav").toString();
+          res.header('x-auth',token).send(newUser);
+        // res.send(newUser);
+
+  }).catch((e) => {
+      console.log(e);
+     res.status(400).send();
+  });
 
 });
 
@@ -55,10 +69,10 @@ exports.getUserData = ((req,res)=>{
       else res.status(500);  
    }).catch(err =>{
            console.log(err);
-        })
+        });
      }
      else res.status(400);
-   })
+   });
    
  exports.validateUser = ((req,res)=>{
    var myquery = { "Name" : req.body.Name,
@@ -76,3 +90,5 @@ exports.getUserData = ((req,res)=>{
        console.log("error");
      })
    })
+
+   

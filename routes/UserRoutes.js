@@ -11,4 +11,8 @@ router.post('/get_user_data',userController.getUserData);
 
 router.get("/",userController.defaultpage );
 
+router.post('/Login',userController.Login);
+
+
+
 module.exports=router;

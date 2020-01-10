@@ -13,38 +13,39 @@ const {fileURLToPath }=require("url");
 const {dirname} = require("path");
 const ObjectId = mongoose.Types.ObjectId;
 const Comment = require("../models/comment");
+
 exports.getPostByUser= ((req,res)=>{
-    
-   console.log(req.body);
-    Post.find({AuthorId : req.body.AuthorId}).then(userPosts=>{
-       console.log(userPosts);
-       console.log(__dirname);
-      var temp = fs.readFileSync(path.join(__dirname ,'../uploads/1578504087845IMG_20191028_123337.jpg'));
-      console.log(temp);
-      temp.toString();
-      res.send(temp);
-      //  res.sendFile(__dirname + '/uploads/1578509051350Screenshot from 2019-12-26 23-10-51.png');
-      //  res.send(userPosts);
-       res.end();
+    console.log(req.body);
+    Post.findOne({AuthorId : req.body.Id}).then(userPosts=>{
+
+      const Data = _.pick(userPosts,['ImageData','Likes','NoOfLikes','NoOfComments']);
+      console.log(userPosts);
+
+       res.send(userPosts);
     })
 })
 
 exports.getPostByCollege=((req,res) =>{
     Post.find({'College' : req.body.College}).then(collegePost =>{
-       console.log(collegePost);
-    
-      })
-})
+        console.log(collegePost);
+       
+      });
+});
 
 exports.createPost=((req,res) =>{
    console.log(req.file);
    console.log(req.body);
 
-   console.log(path.join(__dirname,'../' + req.file.path));
+   console.log(__dirname);
+   var temp = fs.readFileSync(path.join(__dirname,'../' + req.file.path));
+   console.log(temp);
 
-   // console.log(__dirname);
-   // var temp = fs.readFileSync(__dirname  + '\\' + req.file.path);
-   // console.log(temp);
+   // fs.unlink(path.join(__dirname,'../' + req.file.path),(err) => {
+   //    if(err){
+   //       console.log(err);
+   //    }
+   //    console.log('Deleted');
+   // });
 
     const AuthorId = ObjectId (req.body.Id);
     const Name= req.body.Name;
@@ -55,14 +56,17 @@ exports.createPost=((req,res) =>{
     const NoOfComments = 0
     const Type= req.body.Type;
     const Likes = [];
-    const Comments = [];
+    const Comments =[];
+    var check = new Buffer.from(temp).toString('base64');
     const post= new Post({
        AuthorId : AuthorId,Name : Name,College : College, Date : Date, Content : Content,
-       NoOfComments : NoOfComments,NoOfLikes : NoOfLikes,Type : Type,Likes : Likes, Comments :Comments,postImage:req.file.path
+       NoOfComments : NoOfComments,NoOfLikes : NoOfLikes,Type : Type,Likes : Likes,
+       postImage:req.file.path, ImageData:check, Comments : Comments
     });
     post.save().then(post =>{
        console.log(post);
-       res.status(200).json(post);
+      //  var check = new Buffer.from(post.ImageData.buffer);
+       res.status(200).json(post.ImageData);
     }).catch(err =>{
        console.log(err);
        res.status(500).send(err);
@@ -82,7 +86,7 @@ exports.LikesPost=((req,res) =>{
       console.log(post.NoOfLikes);
       console.log(post.Likes);
       res.status(200).json(post);
-   })
+   });
 }) 
 
 exports.PostComment = ((req,res) =>{
