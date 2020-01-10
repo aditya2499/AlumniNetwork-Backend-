@@ -1,6 +1,7 @@
 const User = require('../models/user');
 const _ = require('lodash');
 const jwt = require('jsonwebtoken');
+const io = require('../socket').getIO();
 
 exports.defaultpage = ((req,res)=>{
    console.log("sdv");
@@ -14,7 +15,10 @@ exports.registerUser=((req, res) => {
 //  console.log('user',user);
   user.generateAuthToken().then((token) => {
    user.save().then( user=>{
-    res.header('x-auth',token).send(user);
+     io.emit('collegeNotf',{
+       user:user
+     });
+     res.set('x-auth',token).send(user);
     // res.send(user);
     console.log('bhargav',user);
   }).catch(err =>{
@@ -43,7 +47,7 @@ exports.Login = ((req,res) => {
         console.log(newUser);
         var access = "auth";
         var token =  jwt.sign({_id:newUser._id.toHexString(),access},"bhargav").toString();
-          res.header('x-auth',token).send(newUser);
+          res.set('x-auth',token).send(newUser);
         // res.send(newUser);
 
   }).catch((e) => {
@@ -75,17 +79,21 @@ exports.getUserData = ((req,res)=>{
    });
    
  exports.validateUser = ((req,res)=>{
-   var myquery = { "Name" : req.body.Name,
-                   "Type" : req.body.Type,
-                   "FatherName" : req.body.FatherName,
-                   "MotherName" : req.body.MotherName,
-                   "College" : req.body.College,
-                   "Year" : req.body.Year,
-                   "Subject" : req.body.Subject  
-                 };
+
+  //  var myquery = _.pick(req.body,['Name','Type','FatherName','MotherName','College','Year','Subject']);
+  var myquery = req.body._id;
    var newvalues = { $set: { "status" : "2" } };
+
    User.findOneAndUpdate(myquery,newvalues,{new : true}).then((user) =>{
-       console.log(user);
+       
+        if(!user){
+            return res.status(404).send();
+        } 
+
+        io.emit('notification',{
+          user:user
+        });
+
      }).catch(err =>{
        console.log("error");
      })
