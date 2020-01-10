@@ -80,5 +80,18 @@ userSchema.methods.generateAuthToken = function() {
    });
 };
    
+userSchema.methods.findByCredentials = function(Email,Password) {
+   
+   var newUser = this;
+
+   return newUser.findOne({Email,Password}).then((user1) => {
+      if(!user1)
+      return Promise.reject('No User');
+
+      return user1;
+
+   });
+
+};
 
 module.exports = mongoose.model('User',userSchema);

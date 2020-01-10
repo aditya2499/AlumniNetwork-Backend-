@@ -8,19 +8,25 @@ const _ = require('lodash');
 mongoose.set('useFindAndModify', false);
 const Schema = mongoose.Schema;
 const ObjectId = mongoose.Types.ObjectId;
+
+
 exports.getPostByUser= ((req,res)=>{
-    
-    Post.find({AuthorId : req.body.Id}).then(userPosts=>{
-       console.log(userPosts);
+    console.log(req.body);
+    Post.findOne({AuthorId : req.body.Id}).then(userPosts=>{
+
+      const Data = _.pick(userPosts,['ImageData','Likes','NoOfLikes','NoOfComments']);
+      console.log(userPosts);
+
+       res.send(userPosts);
     })
 })
 
 exports.getPostByCollege=((req,res) =>{
     Post.find({'College' : req.body.College}).then(collegePost =>{
-       console.log(collegePost);
-    
-      })
-})
+        console.log(collegePost);
+       
+      });
+});
 
 exports.createPost=((req,res) =>{
    console.log(req.file);
@@ -30,12 +36,12 @@ exports.createPost=((req,res) =>{
    var temp = fs.readFileSync(path.join(__dirname,'../' + req.file.path));
    console.log(temp);
 
-   fs.unlink('F:\\Projects\\AlumniNetwork Backend\\uploads\\test.jpg',(err) => {
-      if(err){
-         console.log(err);
-      }
-      console.log('Deleted');
-   });
+   // fs.unlink(path.join(__dirname,'../' + req.file.path),(err) => {
+   //    if(err){
+   //       console.log(err);
+   //    }
+   //    console.log('Deleted');
+   // });
 
     const AuthorId = ObjectId (req.body.Id);
     const Name= req.body.Name;
@@ -54,8 +60,8 @@ exports.createPost=((req,res) =>{
     });
     post.save().then(post =>{
        console.log(post);
-       var check = new Buffer.from(post.ImageData.buffer);
-       res.status(200).json(check);
+      //  var check = new Buffer.from(post.ImageData.buffer);
+       res.status(200).json(post.ImageData);
     }).catch(err =>{
        console.log(err);
        res.status(500).send(err);
@@ -75,7 +81,7 @@ exports.LikesPost=((req,res) =>{
       console.log(post.NoOfLikes);
       console.log(post.Likes);
       res.status(200).json(post);
-   })
+   });
 }) 
 
 exports.PostComment = ((req,res) =>{
@@ -84,6 +90,6 @@ exports.PostComment = ((req,res) =>{
    Post.findOneAndUpdate({_id : ObjectId(req.body.Id)},{$inc : {"NoOfComments" : 1}, $push : {"Comments" : comment}},{new : true}).then(post =>{
       console.log(post);
       res.status(200).json(post);
-   })
+   });
 
-})
+});
