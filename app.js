@@ -31,7 +31,7 @@ app.use((req,res,next)=>{
     res.setHeader('Access-Control-Allow-Methods','*');
     res.setHeader('Access-Control-Allow-Headers','*')
     next();
-})
+});
 // const UserRoutes = require("./routes/UserRoutes.js");
 
 // const PostRoutes = require("./routes/postRoutes.js");
