@@ -30,4 +30,6 @@ router.post('/like_post',postController.LikesPost);
 
 router.post('/unlike_post',postController.UnlikePost);
 
+router.post('/post_comment',postController.PostComment);
+
 module.exports=router;
