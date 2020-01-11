@@ -85,12 +85,12 @@ exports.createPost=((req,res) =>{
 
    console.log(temp);
 
-   fs.unlink(path.join(__dirname,'../' + req.file.path),(err) => {
-      if(err){
-         console.log(err);
-      }
-      console.log('Deleted');
-   });
+   // fs.unlink(path.join(__dirname,'../' + req.file.path),(err) => {
+   //    if(err){
+   //       console.log(err);
+   //    }
+   //    console.log('Deleted');
+   // });
 
     const AuthorId = ObjectId (req.body.Id);
     const Name= req.body.Name;

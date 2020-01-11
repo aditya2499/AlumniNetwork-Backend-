@@ -31,8 +31,9 @@ const PostRoutes = require("./routes/postRoutes.js");
 app.use(UserRoutes);
 app.use("/posts",PostRoutes);
 
+//	mongodb+srv://Ad03:KGdePorXHMW9jyNP@alumninetwork-dxjvt.mongodb.net/shop?retryWrites=true&w=majority
 
-mongoose.connect('mongodb://localhost:27017/AlumniBackend').then(result =>{
+mongoose.connect('mongodb+srv://Ad03:KGdePorXHMW9jyNP@alumninetwork-dxjvt.mongodb.net/shop?retryWrites=true&w=majority').then(result =>{
 
    var server = app.listen(8080,(res) =>{
     console.log('Server up on port 8080');
