@@ -78,12 +78,18 @@ exports.createPost=((req,res) =>{
    console.log(req.file);
    console.log(req.body);
 
+   var temp = "";
+   var ImagePath = "";
+
    if(!req.file)
-   return res.status(400).send();
+   {
+      // return res.status(400).send();
+   }else{
+      ImagePath = req.path.file;
+      fs.readFileSync(path.join(__dirname,'../' + ImagePath));
+   }
 
-   var temp = fs.readFileSync(path.join(__dirname,'../' + req.file.path));
-
-   console.log(temp);
+   // console.log(temp);
 
    // fs.unlink(path.join(__dirname,'../' + req.file.path),(err) => {
    //    if(err){
@@ -106,7 +112,7 @@ exports.createPost=((req,res) =>{
     const post= new Post({
        AuthorId : AuthorId,Name : Name,College : College, Date : Date, Content : Content,
        NoOfComments : NoOfComments,NoOfLikes : NoOfLikes,Type : Type,Likes : Likes,
-       postImage:req.file.path, ImageData:check
+       postImage:ImagePath, ImageData:check
     });
     post.save().then(post =>{
        console.log(post);
