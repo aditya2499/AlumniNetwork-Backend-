@@ -28,10 +28,16 @@ exports.getPostByUser= ((req,res)=>{
     console.log(req.body);
     Post.findOne({AuthorId : req.body.Id}).then(userPosts=>{
 
-      const Data = _.pick(userPosts,['ImageData','Likes','NoOfLikes','NoOfComments']);
-      console.log(Data); 
+      const Data = _.pick(userPosts,['Likes','NoOfLikes','NoOfComments']);
+      Data.ImageData = userPosts.ImageData.toString();
+      // console.log(userPosts.ImageData.toString());
+      // console.log(Data);
 
-       res.send(userPosts);
+      if(!userPosts)
+      return res.status(400).send('No Posts Found');
+
+       res.send(Data);
+       res.end();
     })
 })
 
@@ -72,16 +78,19 @@ exports.createPost=((req,res) =>{
    console.log(req.file);
    console.log(req.body);
 
-   console.log(__dirname);
+   if(!req.file)
+   return res.status(400).send();
+
    var temp = fs.readFileSync(path.join(__dirname,'../' + req.file.path));
+
    console.log(temp);
 
-   // fs.unlink(path.join(__dirname,'../' + req.file.path),(err) => {
-   //    if(err){
-   //       console.log(err);
-   //    }
-   //    console.log('Deleted');
-   // });
+   fs.unlink(path.join(__dirname,'../' + req.file.path),(err) => {
+      if(err){
+         console.log(err);
+      }
+      console.log('Deleted');
+   });
 
     const AuthorId = ObjectId (req.body.Id);
     const Name= req.body.Name;
@@ -97,12 +106,12 @@ exports.createPost=((req,res) =>{
     const post= new Post({
        AuthorId : AuthorId,Name : Name,College : College, Date : Date, Content : Content,
        NoOfComments : NoOfComments,NoOfLikes : NoOfLikes,Type : Type,Likes : Likes,
-       postImage:req.file.path, ImageData:check, Comments : Comments
+       postImage:req.file.path, ImageData:check
     });
     post.save().then(post =>{
        console.log(post);
       //  var check = new Buffer.from(post.ImageData.buffer);
-       res.status(200).json(post.ImageData);
+       res.status(200).send(post.ImageData);
     }).catch(err =>{
        console.log(err);
        res.status(500).send(err);
@@ -116,7 +125,8 @@ exports.LikesPost=((req,res) =>{
       res.status(200).json(post);
    })
 
- })
+ });
+
  exports.UnlikePost = ((req,res)=>{
    Post.findOneAndUpdate({ _id : ObjectId(req.body.Id)},{$inc : {"NoOfLikes" : -1}, $pull :{"Likes" : ObjectId(req.body.UserId)}},{new : true}).then(post =>{
       console.log(post.NoOfLikes);

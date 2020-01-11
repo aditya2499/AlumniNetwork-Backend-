@@ -5,6 +5,8 @@ const nodemailer = require("nodemailer");
 const sendgridTransport = require("nodemailer-sendgrid-transport");
 const Token = require("../models/token");
 const crypto =require("crypto");
+const io = require('../socket');
+
 
 const transporter =  nodemailer.createTransport(sendgridTransport({
   auth : {
@@ -19,6 +21,7 @@ exports.registerUser=((req, res) => {
   
   User.findOne({ email: req.body.Email }, function (err, user){
     if (user) return res.status(400).send({ msg: 'The email address you have entered is already associated with another account'});
+
   var body = _.pick(req.body,['Name','FatherName','MotherName','Cgpa','WorkExperience','Type','Year','College','Subject','Password','Email']);
   const newUser = new User(body);
   newUser.Status = 1;
@@ -35,8 +38,7 @@ exports.registerUser=((req, res) => {
                 res.status(200).send('A verification email has been sent to ' + user.Email + '.');
       })
     })
-     //res.send(user);
-    console.log('bhargav',user);
+
   }).catch(err =>{
   res.status(400).send('error while saving the data');
   console.log(err);
@@ -44,12 +46,15 @@ exports.registerUser=((req, res) => {
 
  }).catch((e) => {
    res.status(400).send('Unable to get a token');
+   console.log(e);
  });
 
 });
 })
 
 exports.Login = ((req,res) => {
+
+  console.log(req.header('auth-x'));
 
  console.log(req.body);
 
@@ -64,7 +69,7 @@ exports.Login = ((req,res) => {
         console.log(newUser);
         var access = "auth";
         var token =  jwt.sign({_id:newUser._id.toHexString(),access},"bhargav").toString();
-          res.header('x-auth',token).send(newUser);
+          res.set('x-auth',token).send(newUser);
         // res.send(newUser);
 
   }).catch((e) => {
@@ -96,17 +101,21 @@ exports.getUserData = ((req,res)=>{
    });
    
  exports.validateUser = ((req,res)=>{
-   var myquery = { "Name" : req.body.Name,
-                   "Type" : req.body.Type,
-                   "FatherName" : req.body.FatherName,
-                   "MotherName" : req.body.MotherName,
-                   "College" : req.body.College,
-                   "Year" : req.body.Year,
-                   "Subject" : req.body.Subject  
-                 };
+
+  //  var myquery = _.pick(req.body,['Name','Type','FatherName','MotherName','College','Year','Subject']);
+  var myquery = req.body._id;
    var newvalues = { $set: { "status" : "2" } };
+
    User.findOneAndUpdate(myquery,newvalues,{new : true}).then((user) =>{
-       console.log(user);
+       
+        if(!user){
+            return res.status(404).send();
+        } 
+
+        io.emit('notification',{user:user});
+
+        // socket.to(user.Email).emit('an event', { some: 'data' });
+
      }).catch(err =>{
        console.log("error");
      })
@@ -123,7 +132,14 @@ exports.getUserData = ((req,res)=>{
          
         User.findOneAndUpdate({_id : token.userId},{'isVerified' : true},{new : true},function (err) {
           if (err) { return res.status(500).send({ msg: err.message }); }
+
+          io.getIO().emit('notification',{user});//toCollegePort
           res.status(200).send("The account has been verified. Please log in.");
+
+          //socket
+          
+
+
       })
         // Verify and save the user
         // user.isVerified = true;
