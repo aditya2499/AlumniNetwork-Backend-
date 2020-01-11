@@ -32,5 +32,5 @@ router.post('/unlike_post',postController.UnlikePost);
 
 router.post('/post_comment',postController.PostComment);
 // router.post('/login',postController.Login);
-
+router.post('/filter_post',postController.filterPost);
 module.exports=router;

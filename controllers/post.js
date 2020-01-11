@@ -2,7 +2,8 @@ const Post = require("../models/post");
 const mongoose = require('mongoose');
 const fs = require('fs');
 //const path = require('path');
-
+//const Query = require("../models/query");
+const User = require('../models/user');
 // const Comments = require('../models/comment');
 const _ = require('lodash');
 //const fs = require('fs');
@@ -14,21 +15,56 @@ const {dirname} = require("path");
 const ObjectId = mongoose.Types.ObjectId;
 const Comment = require("../models/comment");
 
+exports.getAllPost = ((req,res) =>{
+   Post.findOne().then(userPosts=>{
+
+      const Data = _.pick(userPosts,['ImageData','Likes','NoOfLikes','NoOfComments']);
+      console.log(Data); 
+
+       res.send(Data);
+    })
+})
 exports.getPostByUser= ((req,res)=>{
     console.log(req.body);
     Post.findOne({AuthorId : req.body.Id}).then(userPosts=>{
 
       const Data = _.pick(userPosts,['ImageData','Likes','NoOfLikes','NoOfComments']);
-      console.log(userPosts);
+      console.log(Data); 
 
        res.send(userPosts);
     })
 })
 
+exports.filterPost=((req,res) =>{
+   let query ={} ;
+   const post =[];
+   if(req.body.Branch)
+   query.Branch=req.body.Branch;
+
+   if(req.body.Year)
+   query.Year= req.body.Year;
+
+   if(req.body.College)
+   query.College = req.body.College;
+   console.log(query);
+   User.find(query).then(users =>{
+      //console.log(users);
+       users.forEach(user =>{
+          console.log(user._id);
+          Post.find({ AuthorId : ObjectId(user._id)}).then(posts =>{
+            console.log(posts); 
+            post.push(posts);
+          })
+       })
+       res.status(200).json(post);
+   }).catch(err =>{
+      res.status(400);
+   })
+})
+
 exports.getPostByCollege=((req,res) =>{
     Post.find({'College' : req.body.College}).then(collegePost =>{
         console.log(collegePost);
-       
       });
 });
 

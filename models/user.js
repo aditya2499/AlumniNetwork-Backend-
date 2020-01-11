@@ -8,51 +8,51 @@ const Schema = mongoose.Schema;
 const userSchema = new Schema({
    Name : {
       type : String,
-      required : true 
+      //required : true 
    },
    Password : {
        type :String,
-       required : true
+       //required : true
    },
    Type : {
       type : String,
-      reuired : true
+      //reuired : true
    },
    FatherName : {
       type : String,
-      reuired : true
+     // reuired : true
    },
    MotherName : {
       type : String,
-      required : true
+      //required : true
    },
    Year :{
        type : Number,
-       required : true
+     //  required : true
    },
    Subject : {
       type: String ,
-      required : true
+      //required : true
    },
    Cgpa :{
       type : Number,
-      required : true
+     // required : true
    },
    College : {
       type : String,
-      required : true
+     // required : true
    },
    WorkExperience : {
       type : String,
-      required : false
+     // required : false
    },
    Status : {
     type : Number ,
-    required : true
+   // required : true
    },
    Email : {
       type : String,
-      required : true
+     // required : true
    },
    tokens:[{
       access:{
@@ -63,7 +63,12 @@ const userSchema = new Schema({
          type:String,
          required:true
       }
-   }]
+   }],
+   isVerified : {
+      type :Boolean,
+      default : false
+   }
+
 });
 
 userSchema.methods.generateAuthToken = function() {
