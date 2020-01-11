@@ -16,7 +16,7 @@ const ObjectId = mongoose.Types.ObjectId;
 const Comment = require("../models/comment");
 
 exports.getAllPost = ((req,res) =>{
-   Post.findOne().then(userPosts=>{
+   Post.find().then(userPosts=>{
 
       const Data = _.pick(userPosts,['ImageData','Likes','NoOfLikes','NoOfComments']);
       console.log(Data); 
@@ -26,7 +26,7 @@ exports.getAllPost = ((req,res) =>{
 })
 exports.getPostByUser= ((req,res)=>{
     console.log(req.body);
-    Post.findOne({AuthorId : req.body.Id}).then(userPosts=>{
+    Post.find({AuthorId : req.body.Id}).then(userPosts=>{
 
       const Data = _.pick(userPosts,['Likes','NoOfLikes','NoOfComments']);
       Data.ImageData = userPosts.ImageData.toString();
@@ -69,12 +69,17 @@ exports.filterPost=((req,res) =>{
 })
 
 exports.getPostByCollege=((req,res) =>{
+   console.log(req.body);
     Post.find({'College' : req.body.College}).then(collegePost =>{
-        console.log(collegePost);
+        console.log('photo',collegePost);
+        res.send(collegePost);
+      }).catch((err) => {
+         console.log('Error',err);
       });
 });
 
 exports.createPost=((req,res) =>{
+   console.log(req.header('x-auth'));
    console.log(req.file);
    console.log(req.body);
 
@@ -85,11 +90,12 @@ exports.createPost=((req,res) =>{
    {
       // return res.status(400).send();
    }else{
-      ImagePath = req.path.file;
-      fs.readFileSync(path.join(__dirname,'../' + ImagePath));
+      ImagePath = req.file.path;
+      console.log(ImagePath);
+   temp =    fs.readFileSync(path.join(__dirname,'../' + ImagePath));
    }
 
-   // console.log(temp);
+   console.log(temp);
 
    // fs.unlink(path.join(__dirname,'../' + req.file.path),(err) => {
    //    if(err){
@@ -98,7 +104,7 @@ exports.createPost=((req,res) =>{
    //    console.log('Deleted');
    // });
 
-    const AuthorId = ObjectId (req.body.Id);
+    const AuthorId = req.body.Id;
     const Name= req.body.Name;
     const College = req.body.College;
     const Date = req.body.Date;
@@ -115,9 +121,10 @@ exports.createPost=((req,res) =>{
        postImage:ImagePath, ImageData:check
     });
     post.save().then(post =>{
-       console.log(post);
+       console.log('Posts',post);
       //  var check = new Buffer.from(post.ImageData.buffer);
-       res.status(200).send(post.ImageData);
+       
+       res.send(post.ImageData.toString());
     }).catch(err =>{
        console.log(err);
        res.status(500).send(err);

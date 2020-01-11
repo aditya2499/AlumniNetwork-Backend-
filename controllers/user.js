@@ -50,7 +50,7 @@ exports.registerUser=((req, res) => {
  });
 
 });
-})
+});
 
 exports.Login = ((req,res) => {
 
@@ -69,6 +69,7 @@ exports.Login = ((req,res) => {
         console.log(newUser);
         var access = "auth";
         var token =  jwt.sign({_id:newUser._id.toHexString(),access},"bhargav").toString();
+        
           res.set('x-auth',token).send(newUser);
         // res.send(newUser);
 
