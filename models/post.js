@@ -32,12 +32,10 @@ const postSchema= new Schema({
       default : 0
    },
    Likes : {
-      type : [ObjectId],
-      required : false
+      type : [ObjectId]
    },
    Comments : {
-      type : [Comment],
-      required : false
+      type : [Comment]
    },
    postImage:{
       type:String
