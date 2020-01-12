@@ -6,7 +6,8 @@ const sendgridTransport = require("nodemailer-sendgrid-transport");
 const Token = require("../models/token");
 const crypto =require("crypto");
 const io = require('../socket');
-
+const bcrypt = require("bcrypt");
+const concatPass = Aditya;
 
 const transporter =  nodemailer.createTransport(sendgridTransport({
   auth : {
@@ -18,13 +19,19 @@ exports.defaultpage = ((req,res)=>{
 });
 
 exports.registerUser=((req, res) => {
-  
+   
+  const password= req.body.password;
+  password=password+concatPass;
+
   User.findOne({ email: req.body.Email }, function (err, user){
     if (user) return res.status(400).send({ msg: 'The email address you have entered is already associated with another account'});
 
-  var body = _.pick(req.body,['Name','FatherName','MotherName','Cgpa','WorkExperience','Type','Year','College','Subject','Password','Email']);
+  var body = _.pick(req.body,['Name','FatherName','MotherName','Cgpa','WorkExperience','Type','Year','College','Subject','Email']);
+  
   const newUser = new User(body);
   newUser.Status = 1;
+  
+  newUser.Password = bcrypt.hash(password,12);
 //  console.log('user',user);
   newUser.generateAuthToken().then((token) => {
    newUser.save().then( user=>{
@@ -38,6 +45,7 @@ exports.registerUser=((req, res) => {
                 res.status(200).send('A verification email has been sent to ' + user.Email + '.');
       })
     })
+
 
   }).catch(err =>{
   res.status(400).send('error while saving the data');
@@ -58,20 +66,30 @@ exports.Login = ((req,res) => {
 
  console.log(req.body);
 
- var body = _.pick(req.body,['Email','Password']);
+ var body = _.pick(req.body,['Email']);
+  
+ const password= req.body.Password;
+ passord+=concatPass;
   
   // User.findByCredentials(body.Email,body.Password).then((newUser) => {
-    User.findOne({'Email':body.Email,'Password':body.Password}).then((newUser) => {   
-        
+    User.findOne({'Email':body.Email}).then((newUser) => {   
         if(!newUser){
-          return res.status(400).send();
+          return res.status(401).send();
         }
         console.log(newUser);
+        bcrypt.compare(newUser.Password,password).then(doMatch =>{
+           if(!doMatch){
+             return res.status(400);
+           }
+        })
         var access = "auth";
         var token =  jwt.sign({_id:newUser._id.toHexString(),access},"bhargav").toString();
         
-          res.set('x-auth',token).send(newUser);
+        var resData = _.pick(newUser,['_id','Name','Email','Cgpa','Year','Branch','College','Type','Experience','tokens']);
+        res.setHeader('x-auth',token)//.send(resData);
         // res.send(newUser);
+        console.log('bargav',res.header('x-auth'));
+        res.send(resData);
 
   }).catch((e) => {
       console.log(e);
@@ -147,6 +165,16 @@ exports.getUserData = ((req,res)=>{
         // user.save();
     });
     })
+   })
+
+   exports.updateProfile= ((req,res)=>{
+     const userId= req._id;
+
+     User.findOneAndUpdate({_id : ObjectId(req.body.userId)},{"WorkExperience" : req.body.WorkExperience},{new : true}).then(post =>{
+       res.status(200).send({msg : "Information has been successfully updated"});
+     }).catch(err =>{
+       console.log(err);
+     })
    })
 
    

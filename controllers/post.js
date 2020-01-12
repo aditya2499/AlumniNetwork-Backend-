@@ -25,6 +25,7 @@ exports.getAllPost = ((req,res) =>{
     })
 })
 exports.getPostByUser= ((req,res)=>{
+   console.log('header',req.header('x-auth'));
     console.log(req.body);
     Post.find({AuthorId : req.body.Id}).then(userPosts=>{
 
@@ -69,17 +70,18 @@ exports.filterPost=((req,res) =>{
 })
 
 exports.getPostByCollege=((req,res) =>{
+   console.log('header',req.header('x-auth'));
    console.log(req.body);
     Post.find({'College' : req.body.College}).then(collegePost =>{
         console.log('photo',collegePost);
-        res.send(collegePost);
+        res.status(200).send(collegePost);
       }).catch((err) => {
          console.log('Error',err);
       });
 });
 
 exports.createPost=((req,res) =>{
-   console.log(req.header('x-auth'));
+   console.log('header',req.header('x-auth'));
    console.log(req.file);
    console.log(req.body);
 
@@ -104,7 +106,7 @@ exports.createPost=((req,res) =>{
    //    console.log('Deleted');
    // });
 
-    const AuthorId = req.body.Id;
+    const AuthorId = req.body._id;
     const Name= req.body.Name;
     const College = req.body.College;
     const Date = req.body.Date;
@@ -118,13 +120,13 @@ exports.createPost=((req,res) =>{
     const post= new Post({
        AuthorId : AuthorId,Name : Name,College : College, Date : Date, Content : Content,
        NoOfComments : NoOfComments,NoOfLikes : NoOfLikes,Type : Type,Likes : Likes,
-       postImage:ImagePath, ImageData:check
+       postImage: req.file.path
     });
     post.save().then(post =>{
        console.log('Posts',post);
       //  var check = new Buffer.from(post.ImageData.buffer);
        
-       res.send(post.ImageData.toString());
+       res.send(post);
     }).catch(err =>{
        console.log(err);
        res.status(500).send(err);
