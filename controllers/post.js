@@ -74,6 +74,12 @@ exports.getPostByCollege=((req,res) =>{
    console.log(req.body);
     Post.find({'College' : req.body.College}).then(collegePost =>{
         console.log('photo',collegePost);
+
+        collegePost.foreach(post =>{
+           if(post.Likes.includes(ObjectId(req.body.UserId)))
+             post.isLiked=true;
+           else post.isLiked=false;  
+        })
         res.status(200).send(collegePost);
       }).catch((err) => {
          console.log('Error',err);

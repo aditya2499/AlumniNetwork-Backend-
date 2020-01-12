@@ -17,37 +17,36 @@ mongoose.Promise = global.Promise;
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json())
-app.use((req,res,next)=>{
-    res.setHeader('Access-Control-Allow-Origin','http://localhost:3000');
-    res.setHeader('Access-Control-Allow-Methods','*');
-    res.setHeader('Access-Control-Allow-Headers','*');
-    res.setHeader('Access-Control-Allow-Credentials','true');
-    next();
+app.use((req, res, next) => {
+  res.setHeader('Access-Control-Allow-Origin', 'http://localhost:3000');
+  res.setHeader('Access-Control-Allow-Methods', '*');
+  res.setHeader('Access-Control-Allow-Headers', '*');
+  res.setHeader('Access-Control-Allow-Credentials', 'true');
+  next();
 });
 
 const UserRoutes = require("./routes/UserRoutes.js");
 const PostRoutes = require("./routes/postRoutes.js");
 
 app.use(UserRoutes);
-app.use("/posts",PostRoutes);
+app.use("/posts", PostRoutes);
 
 //	mongodb+srv://Ad03:KGdePorXHMW9jyNP@alumninetwork-dxjvt.mongodb.net/shop?retryWrites=true&w=majority
 
-mongoose.connect('mongodb://localhost:27017/AlumniDatabase',{ useNewUrlParser: true }).then(result =>{
+mongoose.connect('mongodb://localhost:27017/AlumniDatabase', { useNewUrlParser: true }).then(result => {
 
-   var server = app.listen(8080,(res) =>{
+  var server = app.listen(8080, (res) => {
     console.log('Server up on port 8080');
-    
+
     var io = socket.init(server);
 
-     io.on('connection',(socket) => {
-       console.log('New Connection');
-     });
+    io.on('connection', (socket) => {
+      console.log('New Connection');
+    });
 
-     io.on('disconnect',(socket) => {
-       console.log("Disconnected");
-     });
-     
+    io.on('disconnect', (socket) => {
+      console.log("Disconnected");
+    });
   });
 
 });
