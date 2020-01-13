@@ -7,8 +7,9 @@ const Token = require("../models/token");
 const crypto = require("crypto");
 const io = require('../socket');
 const bcrypt = require("bcryptjs");
-concatPass = "Aditya";
+var concatPass = "Aditya";
 const api = require("../EmailAPIKey");
+
 const transporter = nodemailer.createTransport(sendgridTransport({
   auth: {
     api_key: api.apiKey
@@ -19,26 +20,30 @@ exports.defaultpage = ((req, res) => {
 });
 
 exports.registerUser = ((req, res) => {
-
-  const password = req.body.password;
+ 
+  console.log(req.body);  
+   password = req.body.Password;
   password = password + concatPass;
+  console.log(password);
 
   User.findOne({ email: req.body.Email }, function (err, user) {
-    if (user) return res.status(400).send({ msg: 'The email address you have entered is already associated with another account' });
+    //if (user) return res.status(400).send({ msg: 'The email address you have entered is already associated with another account' });
 
     var body = _.pick(req.body, ['Name', 'FatherName', 'MotherName', 'Cgpa', 'WorkExperience', 'Type', 'Year', 'College', 'Subject', 'Email']);
 
     const newUser = new User(body);
     newUser.Status = 1;
 
-    newUser.Password = bcrypt.hash(password, 12);
-    //  console.log('user',user);
+    bcrypt.hash(password, 12).then((result) => {
+       newUser.Password = result;
+
     newUser.generateAuthToken().then((token) => {
+      console.log('token');
       newUser.save().then(user => {
         //res.header('x-auth',token).send(user);
         var token = new Token({ userId: user._id, token: crypto.randomBytes(16).toString('hex') });
         token.save().then(token => {
-          var mailOptions = { from: 'adbansal99@gmail.com', to: user.Email, subject: 'Account Verification Token', text: 'Hello,\n\n' + 'Please verify your account by clicking the link: \nhttp:\/\/' + req.headers.host + '\/confirmation\/' + token.token + '.\n' }
+          var mailOptions = { from: 'greataditya24@gmail.com', to: user.Email, subject: 'Account Verification Token', text: 'Hello,\n\n' + 'Please verify your account by clicking the link: \nhttp:\/\/' + req.headers.host + '\/confirmation\/' + token.token + '.\n' }
 
           transporter.sendMail(mailOptions, function (err) {
             if (err) { return res.status(500).send({ msg: err.message }); }
@@ -60,6 +65,9 @@ exports.registerUser = ((req, res) => {
   });
 });
 
+});
+
+
 exports.Login = ((req, res) => {
 
   console.log(req.header('auth-x'));
@@ -68,7 +76,7 @@ exports.Login = ((req, res) => {
 
   var body = _.pick(req.body, ['Email']);
 
-  const password = req.body.Password;
+  password = req.body.Password;
   passord += concatPass;
 
   // User.findByCredentials(body.Email,body.Password).then((newUser) => {

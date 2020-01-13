@@ -80,7 +80,7 @@ userSchema.methods.generateAuthToken = function() {
    
    //console.log('newUser',newUser);
    return newUser.save().then(() => {
-      //console.log('newUser');
+      console.log('newUser');
       return token;
    });
 };
