@@ -42,32 +42,7 @@ exports.getPostByUser= ((req,res)=>{
     })
 })
 
-exports.filterPost=((req,res) =>{
-   let query ={} ;
-   const post =[];
-   if(req.body.Branch)
-   query.Branch=req.body.Branch;
 
-   if(req.body.Year)
-   query.Year= req.body.Year;
-
-   if(req.body.College)
-   query.College = req.body.College;
-   console.log(query);
-   User.find(query).then(users =>{
-      //console.log(users);
-       users.forEach(user =>{
-          console.log(user._id);
-          Post.find({ AuthorId : ObjectId(user._id)}).then(posts =>{
-            console.log(posts); 
-            post.push(posts);
-          })
-       })
-       res.status(200).json(post);
-   }).catch(err =>{
-      res.status(400);
-   })
-})
 
 exports.getPostByCollege=((req,res) =>{
    console.log('header',req.header('x-auth'));

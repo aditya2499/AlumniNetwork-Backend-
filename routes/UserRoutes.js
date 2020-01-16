@@ -13,7 +13,9 @@ router.get("/", userController.defaultpage);
 
 router.post('/Login', userController.Login);
 
-router.get('/confirmation/:id', userController.confirmUser)
+router.get('/confirmation/:id', userController.confirmUser);
+
+router.post("/filter_users",userController.filterUsers);
 
 
 

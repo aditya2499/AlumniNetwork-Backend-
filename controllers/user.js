@@ -185,3 +185,25 @@ exports.updateProfile = ((req, res) => {
   })
 })
 
+exports.filterUsers=((req,res) =>{
+  let query ={} ;
+  //const post =[];
+  if(req.body.Branch)
+  query.Branch=req.body.Branch;
+
+  if(req.body.Year)
+  query.Year= req.body.Year;
+
+  if(req.body.College)
+  query.College = req.body.College;
+
+  if(req.body.Name)
+  query.Name = req.body.Name;
+  console.log(query);
+  User.find(query).then(users =>{
+     
+      res.status(200).send(users);
+  }).catch(err =>{
+     res.status(400);
+  })
+})
