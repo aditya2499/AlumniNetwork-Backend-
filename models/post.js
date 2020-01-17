@@ -39,12 +39,8 @@ const postSchema= new Schema({
    },
    postImage:{
       type:String
-   },
-   ImageData:{
-      type:Buffer
    }
    //Comment : {}
-
-})
+});
 
 module.exports = mongoose.model("Post",postSchema);

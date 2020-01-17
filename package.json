@@ -8,6 +8,7 @@
     "btoa": "^1.2.1",
     "crypto": "^1.0.1",
     "express": "^4.17.1",
+    "image-rotate": "^1.0.0",
     "jsonwebtoken": "^8.5.1",
     "lodash": "^4.17.15",
     "mongodb": "^3.4.1",

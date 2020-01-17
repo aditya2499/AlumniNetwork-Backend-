@@ -6,7 +6,6 @@ const fs = require('fs');
 const User = require('../models/user');
 // const Comments = require('../models/comment');
 const _ = require('lodash');
-//const fs = require('fs');
 const path = require('path');
 mongoose.set('useFindAndModify', false);
 const Schema = mongoose.Schema;
@@ -14,6 +13,7 @@ const {fileURLToPath }=require("url");
 const {dirname} = require("path");
 const ObjectId = mongoose.Types.ObjectId;
 const Comment = require("../models/comment");
+const rotate = require('image-rotate');
 
 exports.getAllPost = ((req,res) =>{
    Post.findOne().then(userPosts=>{
@@ -22,14 +22,15 @@ exports.getAllPost = ((req,res) =>{
       console.log(Data); 
 
        res.send(Data);
-    })
-})
+    });
+});
+
 exports.getPostByUser= ((req,res)=>{
     console.log(req.body);
     Post.findOne({AuthorId : req.body.Id}).then(userPosts=>{
 
       const Data = _.pick(userPosts,['Likes','NoOfLikes','NoOfComments']);
-      Data.ImageData = userPosts.ImageData.toString();
+      // Data.ImageData = userPosts.ImageData.toString();
       // console.log(userPosts.ImageData.toString());
       // console.log(Data);
 
@@ -66,30 +67,22 @@ exports.filterPost=((req,res) =>{
    }).catch(err =>{
       res.status(400);
    })
-})
+}) 
 
 exports.getPostByCollege=((req,res) =>{
+   console.log('body',req.body);
     Post.find({'College' : req.body.College}).then(collegePost =>{
-        console.log(collegePost);
+        console.log('No of posts',collegePost.length);
+        collegePost.reverse();
+        res.send(collegePost);
       });
 });
 
 exports.createPost=((req,res) =>{
-   console.log(req.file);
-   console.log(req.body);
-
-   var temp = "";
-   var ImagePath = "";
-
-   if(!req.file)
-   {
-      // return res.status(400).send();
-   }else{
-      ImagePath = req.path.file;
-      fs.readFileSync(path.join(__dirname,'../' + ImagePath));
-   }
-
-   // console.log(temp);
+   console.log('In');
+   console.log('file',req.file);
+   console.log('body',req.body);
+   // rotate(path.join(__dirname,'../' + req.file.path),path.join(__dirname,'../' + req.file.path),Math.PI/4);
 
    // fs.unlink(path.join(__dirname,'../' + req.file.path),(err) => {
    //    if(err){
@@ -108,16 +101,16 @@ exports.createPost=((req,res) =>{
     const Type= req.body.Type;
     const Likes = [];
     const Comments =[];
-    var check = new Buffer.from(temp).toString('base64');
     const post= new Post({
        AuthorId : AuthorId,Name : Name,College : College, Date : Date, Content : Content,
        NoOfComments : NoOfComments,NoOfLikes : NoOfLikes,Type : Type,Likes : Likes,
-       postImage:ImagePath, ImageData:check
+       postImage: req.file.path
     });
-    post.save().then(post =>{
-       console.log(post);
-      //  var check = new Buffer.from(post.ImageData.buffer);
-       res.status(200).send(post.ImageData);
+    console.log('Bhargab');
+    post.save().then(post1 =>{
+       console.log('Post',post1);
+       res.send(post1);
+       console.log('Posted successfully');
     }).catch(err =>{
        console.log(err);
        res.status(500).send(err);
@@ -126,8 +119,9 @@ exports.createPost=((req,res) =>{
 
 exports.LikesPost=((req,res) =>{
    Post.findOneAndUpdate({ _id :ObjectId(req.body.Id) },{ $inc : {"NoOfLikes" : 1}, $push : {"Likes" : ObjectId(req.body.UserId) } },{new : true}).then(post =>{
-      console.log(post.NoOfLikes);
-      console.log(post.Likes);
+      
+      console.log('Checking likes??');
+
       res.status(200).json(post);
    })
 
@@ -135,11 +129,12 @@ exports.LikesPost=((req,res) =>{
 
  exports.UnlikePost = ((req,res)=>{
    Post.findOneAndUpdate({ _id : ObjectId(req.body.Id)},{$inc : {"NoOfLikes" : -1}, $pull :{"Likes" : ObjectId(req.body.UserId)}},{new : true}).then(post =>{
-      console.log(post.NoOfLikes);
-      console.log(post.Likes);
+      
+      console.log('Why Unllike ??');
+      
       res.status(200).json(post);
    });
-}) 
+});
 
 exports.PostComment = ((req,res) =>{
    var body = _.pick(req.body,["AuthorId","AuthorName","Text","TimeStamp"]);
@@ -147,5 +142,5 @@ exports.PostComment = ((req,res) =>{
    Post.findOneAndUpdate({_id : ObjectId(req.body.Id)},{$inc : {"NoOfComments" : 1}, $push : {"Comments" : comment}},{new : true}).then(post =>{
       console.log(post);
       res.status(200).json(post);
-   })
- })
+   });
+ });

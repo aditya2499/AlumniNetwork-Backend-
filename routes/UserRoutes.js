@@ -9,12 +9,8 @@ router.post('/validate_user',userController.validateUser);
 
 router.post('/get_user_data',userController.getUserData);
 
-router.get("/",userController.defaultpage );
-
 router.post('/Login',userController.Login);
 
-router.get('/confirmation/:id',userController.confirmUser)
+router.get('/confirmation/:id',userController.confirmUser);
 
-
-
-module.exports=router;
+module.exports = router;
