@@ -162,7 +162,7 @@ exports.confirmUser = ((req, res) => {
       User.findOneAndUpdate({ _id: token.userId }, { 'isVerified': true }, { new: true }, function (err) {
         if (err) { return res.status(500).send({ msg: err.message }); }
 
-        io.getIO().emit('notification', { user });//toCollegePort
+        io.emit('NITJ', { user });//toCollegePort
         res.status(200).send("The account has been verified. Please log in.");
 
         //socket
