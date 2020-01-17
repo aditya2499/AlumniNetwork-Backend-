@@ -2,7 +2,7 @@ const express = require("express");
 const User = require('../models/user');
 const nodemailer = require("nodemailer");
 const sendgridTransport = require("nodemailer-sendgrid-transport");
-const api = require("../EmailAPIKey");
+const api = require("../playground/apikey");
 
 const transporter = nodemailer.createTransport(sendgridTransport({
    auth: {
