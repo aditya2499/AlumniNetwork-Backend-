@@ -16,7 +16,7 @@ const Comment = require("../models/comment");
 const rotate = require('image-rotate');
 
 exports.getAllPost = ((req,res) =>{
-   Post.findOne().then(userPosts=>{
+   Post.find().then(userPosts=>{
 
       const Data = _.pick(userPosts,['ImageData','Likes','NoOfLikes','NoOfComments']);
       console.log(Data); 
@@ -26,8 +26,9 @@ exports.getAllPost = ((req,res) =>{
 });
 
 exports.getPostByUser= ((req,res)=>{
+   console.log('header',req.header('x-auth'));
     console.log(req.body);
-    Post.findOne({AuthorId : req.body.Id}).then(userPosts=>{
+    Post.find({AuthorId : req.body.Id}).then(userPosts=>{
 
       const Data = _.pick(userPosts,['Likes','NoOfLikes','NoOfComments']);
       // Data.ImageData = userPosts.ImageData.toString();
@@ -91,7 +92,7 @@ exports.createPost=((req,res) =>{
    //    console.log('Deleted');
    // });
 
-    const AuthorId = ObjectId (req.body.Id);
+    const AuthorId = req.body._id;
     const Name= req.body.Name;
     const College = req.body.College;
     const Date = req.body.Date;

@@ -1,3 +1,6 @@
 playground
 node_modules
 package-lock.json
+*.png
+*.jpg
+EmailAPIKey.js

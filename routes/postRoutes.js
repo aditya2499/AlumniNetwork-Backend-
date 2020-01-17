@@ -20,6 +20,8 @@ const router = express.Router();
 
 const postController = require("../controllers/post");
 
+const emailController = require("../controllers/email");
+
 router.post('/get_post_by_user',postController.getPostByUser);
 
 router.post('/get_post_by_college',postController.getPostByCollege);
@@ -35,4 +37,8 @@ router.post('/post_comment',postController.PostComment);
 router.post('/filter_post',postController.filterPost);
 
 // router.get('/',post)
+// router.post('/login',postController.Login);
+//router.post('/filter_post',postController.filterPost);
+
+router.post("/send_email",emailController.sendEmail);
 module.exports=router;

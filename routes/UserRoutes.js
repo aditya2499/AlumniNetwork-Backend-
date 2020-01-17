@@ -3,14 +3,20 @@ const router = express.Router();
 const userController = require("../controllers/user.js");
 
 
-router.post("/register",userController.registerUser );
+router.post("/register", userController.registerUser);
 
-router.post('/validate_user',userController.validateUser);
+router.post('/validate_user', userController.validateUser);
 
-router.post('/get_user_data',userController.getUserData);
+router.post('/get_user_data', userController.getUserData);
 
-router.post('/Login',userController.Login);
+router.get("/", userController.defaultpage);
 
-router.get('/confirmation/:id',userController.confirmUser);
+router.post('/Login', userController.Login);
+
+router.get('/confirmation/:id', userController.confirmUser);
+
+router.post("/filter_users",userController.filterUsers);
+
+
 
 module.exports = router;

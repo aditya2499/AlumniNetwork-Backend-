@@ -31,15 +31,15 @@ const UserRoutes = require("./routes/UserRoutes.js");
 const PostRoutes = require("./routes/postRoutes.js");
 
 app.use(UserRoutes);
-app.use("/posts",PostRoutes);
+app.use("/posts", PostRoutes);
 
 //	mongodb+srv://Ad03:KGdePorXHMW9jyNP@alumninetwork-dxjvt.mongodb.net/shop?retryWrites=true&w=majority
 
 mongoose.connect('mongodb://localhost:27017/AluminiBackend',{ useNewUrlParser: true }).then(result =>{
 
-   var server = app.listen(8080,(res) =>{
+  var server = app.listen(8080, (res) => {
     console.log('Server up on port 8080');
-    
+
     var io = socket.init(server);
 
      io.on('connection',(soc) => {

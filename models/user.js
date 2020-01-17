@@ -75,10 +75,10 @@ userSchema.methods.generateAuthToken = function() {
    var newUser = this;
    var access = "auth";
    var token = jwt.sign({_id:newUser._id.toHexString(),access},"bhargav").toString();
-   console.log('token',token);
+  // console.log('token',token);
    newUser.tokens.push({access,token});
    
-   console.log('newUser',newUser);
+   //console.log('newUser',newUser);
    return newUser.save().then(() => {
       console.log('newUser');
       return token;
