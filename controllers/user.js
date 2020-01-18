@@ -80,21 +80,24 @@ exports.Login = ((req, res) => {
   password += concatPass;
 
   // User.findByCredentials(body.Email,body.Password).then((newUser) => {
-  User.findOne({ 'Email': body.Email , 'Status':2}).then((newUser) => {
+  User.findOne({ 'Email': body.Email , 'Status':2 , Type : req.body.Type}).then((newUser) => {
     console.log('LoginData',newUser);
     if (!newUser) {
       return res.status(401).send();
     }
+
     console.log(newUser);
+
     bcrypt.compare(newUser.Password, password).then(doMatch => {
       if (!doMatch) {
         return res.status(400);
       }
-    })
+    });
+
     var access = "auth";
     var token = jwt.sign({ _id: newUser._id.toHexString(), access }, "bhargav").toString();
 
-    var resData = _.pick(newUser, ['_id', 'Name', 'Email', 'Cgpa', 'Year', 'Branch', 'College', 'Type', 'Experience', 'tokens']);
+    var resData = _.pick(newUser, ['_id', 'Name', 'Email', 'Cgpa', 'Year', 'Branch', 'College', 'Type', 'WorkExperience', 'tokens']);
     res.setHeader('x-auth', token)//.send(resData);
     // res.send(newUser);
     // console.log('bargav', res.header('x-auth'));
@@ -115,6 +118,7 @@ exports.getUserData = ((req, res) => {
     res.send(user);
   }).catch((err) =>{
     console.log(err);
+    res.send(err);
   })
 });
 
@@ -202,6 +206,8 @@ exports.filterUsers=((req,res) =>{
 
   if(req.body.Name)
   query.Name = req.body.Name;
+
+  query.Type = "Alumni";
   console.log(query);
   const userData=[];
   User.find(query).then(users =>{
@@ -235,13 +241,10 @@ exports.getUnverifiedUsers = ((req,res) => {
 exports.updateUsers = ((req,res) => {
    console.log('update Request',req.body);
 
-   User.find({_id:req.body._id},(user) => {
-      user.WorkExperience = user.WorkExperience.concat('/n' + req.body.WorkExperience);
-
-      User.findByIdAndUpdate({_id:req.body._id},{$set:{WorkExperience:user.WorkExperience}},{new:true},(data) => {
+      User.findOneAndUpdate({_id:req.body._id},{$set:{WorkExperience:req.body.WorkExperience}},{new:true}).then((data) => {
         console.log("Updated data",data); 
         res.send(data);
-      });
+
    }).catch((err) => {
      console.log("error has occured while updating");
      res.send("Error has occured while updating");
