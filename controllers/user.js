@@ -232,3 +232,20 @@ exports.getUnverifiedUsers = ((req,res) => {
  });
 });
 
+exports.updateUsers = ((req,res) => {
+   console.log('update Request',req.body);
+
+   User.find({_id:req.body._id},(user) => {
+      user.WorkExperience = user.WorkExperience.concat('/n' + req.body.WorkExperience);
+
+      User.findByIdAndUpdate({_id:req.body._id},{$set:{WorkExperience:user.WorkExperience}},{new:true},(data) => {
+        console.log("Updated data",data); 
+        res.send(data);
+      });
+   }).catch((err) => {
+     console.log("error has occured while updating");
+     res.send("Error has occured while updating");
+   });
+   
+});
+

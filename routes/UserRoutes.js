@@ -19,5 +19,7 @@ router.post("/filter_users",userController.filterUsers);
 
 router.post("/get_unverified_users",userController.getUnverifiedUsers);
 
+router.post("/update_users",userController.updateUsers);
+
 
 module.exports = router;
