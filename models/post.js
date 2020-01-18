@@ -38,6 +38,10 @@ const postSchema= new Schema({
    },
    postImage:{
       type:String
+   },
+   PostDate : {
+      type : Date,
+     default : Date.now()
    }
    //Comment : {}
 });

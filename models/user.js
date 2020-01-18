@@ -95,7 +95,6 @@ userSchema.methods.findByCredentials = function(Email,Password) {
       return Promise.reject('No User');
 
       return user1;
-
    });
 };
 

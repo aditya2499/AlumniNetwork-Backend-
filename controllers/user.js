@@ -43,7 +43,7 @@ exports.registerUser = ((req, res) => {
         //res.header('x-auth',token).send(user);
         var token = new Token({ userId: user._id, token: crypto.randomBytes(16).toString('hex') });
         token.save().then(token => {
-          var mailOptions = { from: 'greataditya24@gmail.com', to: user.Email, subject: 'Account Verification Token', text: 'Hello,\n\n' + 'Please verify your account by clicking the link: \nhttp:\/\/' + req.headers.host + '\/confirmation\/' + token.token + '\n' }
+          var mailOptions = { from: 'greataditya24@gmail.com', to: user.Email, subject: 'Account Verification Token', text: 'Hello,\n\n' + 'Please verify your account by clicking the link: \nhttp:\/\/' + req.headers.host + '\/confirmation\/' + token.token }
 
           transporter.sendMail(mailOptions, function (err) {
             if (err) { return res.status(500).send({ msg: err.message }); }
@@ -203,9 +203,18 @@ exports.filterUsers=((req,res) =>{
   if(req.body.Name)
   query.Name = req.body.Name;
   console.log(query);
+  const userData=[];
   User.find(query).then(users =>{
      
-      res.status(200).send(users);
+    users.forEach(userDoc =>{
+      var body= _.pick(userDoc,['Name','Email','College','Year','Cgpa','WorkExperience']);
+      userData.push(body);
+    })
+    // var body = _.pick(users,['Name','Email']);
+    // const Users= new User(body);
+    //console.log(Users);
+    console.log('userData',userData);
+      res.status(200).json(userData);
   }).catch(err =>{
      res.status(400);
   })
