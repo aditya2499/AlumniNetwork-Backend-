@@ -8,7 +8,7 @@ const crypto = require("crypto");
 const io = require('../socket');
 const bcrypt = require("bcryptjs");
 var concatPass = "Aditya";
-const api = require("../EmailAPIKey");
+const api = require("../playground/apikey");
 
 const transporter = nodemailer.createTransport(sendgridTransport({
   auth: {
@@ -29,7 +29,7 @@ exports.registerUser = ((req, res) => {
   User.findOne({ email: req.body.Email }, function (err, user) {
     //if (user) return res.status(400).send({ msg: 'The email address you have entered is already associated with another account' });
 
-    var body = _.pick(req.body, ['Name', 'FatherName', 'MotherName', 'Cgpa', 'WorkExperience', 'Type', 'Year', 'College', 'Branch', 'Email']);
+    var body = _.pick(req.body, ['Name', 'FatherName','Branch', 'MotherName', 'Cgpa', 'WorkExperience', 'Type', 'Year', 'College', 'Email']);
 
     const newUser = new User(body);
     newUser.Status = 1;
@@ -72,7 +72,7 @@ exports.Login = ((req, res) => {
 
   console.log(req.header('auth-x'));
 
-  console.log(req.body);
+  console.log('Login',req.body);
 
   var body = _.pick(req.body, ['Email']);
 
@@ -80,7 +80,8 @@ exports.Login = ((req, res) => {
   password += concatPass;
 
   // User.findByCredentials(body.Email,body.Password).then((newUser) => {
-  User.findOne({ 'Email': body.Email }).then((newUser) => {
+  User.findOne({ 'Email': body.Email , 'Status':2}).then((newUser) => {
+    console.log('LoginData',newUser);
     if (!newUser) {
       return res.status(401).send();
     }
@@ -96,7 +97,7 @@ exports.Login = ((req, res) => {
     var resData = _.pick(newUser, ['_id', 'Name', 'Email', 'Cgpa', 'Year', 'Branch', 'College', 'Type', 'Experience', 'tokens']);
     res.setHeader('x-auth', token)//.send(resData);
     // res.send(newUser);
-    console.log('bargav', res.header('x-auth'));
+    // console.log('bargav', res.header('x-auth'));
     res.send(resData);
 
   }).catch((e) => {
@@ -107,47 +108,46 @@ exports.Login = ((req, res) => {
 });
 
 exports.getUserData = ((req, res) => {
-  //console.log("inner");
-  if (req.body.Type === 'Alumni') {
-    //console.log(req)
-    User.findOne({ "Name": req.body.Name, "Password": req.body.Password }).then(userInfo => {
-      //userInfo.json()
-      //console.log(userInfo.Status);
-      if(!userInfo)
-      return res.status(400);
-      
-      if(userInfo.Status){
-      console.log(userInfo._id)
-        res.status(200).json(userInfo);
-        console.log('Login was success');
-      }
-      else res.status(500);
-    }).catch(err => {
-      console.log(err);
-    });
-  }
-  else res.status(400);
+  console.log("College will receive the data to check the user manually");
+  console.log(req.body);
+  User.findOne({_id:req.body._id}).then((user) => {
+    console.log(user);
+    res.send(user);
+  }).catch((err) =>{
+    console.log(err);
+  })
 });
 
 exports.validateUser = ((req, res) => {
 
+  console.log(req.body);
   //  var myquery = _.pick(req.body,['Name','Type','FatherName','MotherName','College','Year','Subject']);
-  var myquery = req.body._id;
-  var newvalues = { $set: { "status": "2" } };
+  if(req.body.isauthorized)
+  {
+    console.log('authorized',req.body);
+    var myquery = {_id:req.body._id};
+    var newvalues = { $set: { Status: 2 } };
+  
+    User.findOneAndUpdate(myquery, newvalues, { new: true }).then((user) => {
+  
+      if (!user) {
+        return res.status(400).send();
+      }
+  
 
-  User.findOneAndUpdate(myquery, newvalues, { new: true }).then((user) => {
-
-    if (!user) {
-      return res.status(404).send();
-    }
-
-    io.emit('notification', { user: user });
-
-    // socket.to(user.Email).emit('an event', { some: 'data' });
-
-  }).catch(err => {
-    console.log("error");
-  })
+      console.log('verified data ',user);
+      res.send(user);
+    }).catch(err => {
+      console.log("error");
+    })
+  }else{
+    console.log("Deletion");
+    User.deleteOne({_id:req.body._id}).then((user) => {
+      console.log("Deleted successfully");
+      console.log(user);
+    });
+  }
+ console.log("Done");  
 })
 
 exports.confirmUser = ((req, res) => {
@@ -162,7 +162,8 @@ exports.confirmUser = ((req, res) => {
       User.findOneAndUpdate({ _id: token.userId }, { 'isVerified': true }, { new: true }, function (err) {
         if (err) { return res.status(500).send({ msg: err.message }); }
 
-        io.getIO().emit('NITJ', { user });//toCollegePort
+        console.log('notification',[user]);
+        io.getIO().emit('notification', {user:user});
         res.status(200).send("The account has been verified. Please log in.");
 
         //socket
@@ -217,4 +218,13 @@ exports.filterUsers=((req,res) =>{
   }).catch(err =>{
      res.status(400);
   })
-})
+});
+
+exports.getUnverifiedUsers = ((req,res) => {
+ console.log('unverified request',req.body);
+ User.find({isVerified:true,Status:1}).then((user) => {
+   console.log("Unverified Users",user);
+   res.send({user:user});
+ });
+});
+

@@ -17,6 +17,7 @@ router.get('/confirmation/:id', userController.confirmUser);
 
 router.post("/filter_users",userController.filterUsers);
 
+router.post("/get_unverified_users",userController.getUnverifiedUsers);
 
 
 module.exports = router;
