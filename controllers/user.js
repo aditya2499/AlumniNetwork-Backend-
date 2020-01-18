@@ -30,7 +30,7 @@ exports.registerUser = ((req, res) => {
     //if (user) return res.status(400).send({ msg: 'The email address you have entered is already associated with another account' });
 
     var body = _.pick(req.body, ['Name', 'FatherName','Branch', 'MotherName', 'Cgpa', 'WorkExperience', 'Type', 'Year', 'College', 'Email']);
-
+ 
     const newUser = new User(body);
     newUser.Status = 1;
 
@@ -153,18 +153,18 @@ exports.validateUser = ((req, res) => {
 exports.confirmUser = ((req, res) => {
   Token.findOne({ token: req.params.id }, function (err, token) {
     console.log(token);
-    if (!token) return res.status(400).send({ type: 'not-verified', msg: 'We were unable to find a valid token. Your token my have expired.' });
+    if (!token) return res.status(400).send('We were unable to find a valid token. Your token my have expired.' );
 
     User.findOne({ _id: token.userId, email: req.body.email }, function (err, user) {
-      if (!user) return res.status(400).send({ msg: 'We were unable to find a user for this token.' });
-      if (user.isVerified) return res.status(400).send({ type: 'already-verified', msg: 'This user has already been verified.' });
+      if (!user) return res.status(400).send('We were unable to find a user for this token.');
+      if (user.isVerified) return res.status(400).send('This user has already been verified.');
 
       User.findOneAndUpdate({ _id: token.userId }, { 'isVerified': true }, { new: true }, function (err) {
         if (err) { return res.status(500).send({ msg: err.message }); }
 
-        console.log('notification',[user]);
-        io.getIO().emit('notification', {user:user});
-        res.status(200).send("The account has been verified. Please log in.");
+        console.log('notification',user);
+        io.getIO().emit(user.College, {user:user});
+        res.status(200).send("The account has been verified successfully and your details were sent to the college for verification");
 
         //socket
 
@@ -222,7 +222,7 @@ exports.filterUsers=((req,res) =>{
 
 exports.getUnverifiedUsers = ((req,res) => {
  console.log('unverified request',req.body);
- User.find({isVerified:true,Status:1}).then((user) => {
+ User.find({isVerified:true,Status:1,College:req.body.College}).then((user) => {
    var reqData = [];
    user.forEach((result) => {
      reqData.push({user:result});
