@@ -80,14 +80,11 @@ exports.Login = ((req, res) => {
   password += concatPass;
 
   // User.findByCredentials(body.Email,body.Password).then((newUser) => {
-  User.findOne({ 'Email': body.Email , 'Status':2 , Type : req.body.Type}).then((newUser) => {
+  User.findOne({ 'Email': body.Email , 'Status':2 , 'Type' : req.body.Type}).then((newUser) => {
     console.log('LoginData',newUser);
     if (!newUser) {
       return res.status(401).send();
     }
-
-    console.log(newUser);
-
     bcrypt.compare(newUser.Password, password).then(doMatch => {
       if (!doMatch) {
         return res.status(400);

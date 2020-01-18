@@ -100,6 +100,12 @@ exports.createPost=((req,res) =>{
    //    }
    //    console.log('Deleted');
    // });
+   
+   var ImagePath = null;
+
+   if(req.file){
+      ImagePath = req.file.path;
+   }
 
     const AuthorId = req.body._id;
     const Name= req.body.Name;
@@ -114,7 +120,7 @@ exports.createPost=((req,res) =>{
     const post= new Post({
        AuthorId : AuthorId,Name : Name,College : College, Date : Date, Content : Content,
        NoOfComments : NoOfComments,NoOfLikes : NoOfLikes,Type : Type,Likes : Likes,
-       postImage: req.file.path
+       postImage: ImagePath
     });
     console.log('Bhargab');
     post.save().then(post1 =>{
