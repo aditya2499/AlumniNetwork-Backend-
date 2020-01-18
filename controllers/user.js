@@ -163,7 +163,7 @@ exports.confirmUser = ((req, res) => {
         if (err) { return res.status(500).send({ msg: err.message }); }
 
         console.log('notification',[user]);
-        io.getIO().emit('notification', {user:[user]});
+        io.getIO().emit('notification', {user:user});
         res.status(200).send("The account has been verified. Please log in.");
 
         //socket
@@ -214,8 +214,12 @@ exports.filterUsers=((req,res) =>{
 exports.getUnverifiedUsers = ((req,res) => {
  console.log('unverified request',req.body);
  User.find({isVerified:true,Status:1}).then((user) => {
-   console.log("Unverified Users",user);
-   res.send({user:user});
+   var reqData = [];
+   user.forEach((result) => {
+     reqData.push({user:result});
+   });
+   console.log("Unverified Users",reqData);
+   res.send(reqData);
  });
 });
 
