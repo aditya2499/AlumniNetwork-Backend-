@@ -29,7 +29,7 @@ exports.registerUser = ((req, res) => {
   User.findOne({ email: req.body.Email }, function (err, user) {
     //if (user) return res.status(400).send({ msg: 'The email address you have entered is already associated with another account' });
 
-    var body = _.pick(req.body, ['Name', 'FatherName', 'MotherName', 'Cgpa', 'WorkExperience', 'Type', 'Year', 'College', 'Subject', 'Email']);
+    var body = _.pick(req.body, ['Name', 'FatherName', 'MotherName', 'Cgpa', 'WorkExperience', 'Type', 'Year', 'College', 'Branch', 'Email']);
 
     const newUser = new User(body);
     newUser.Status = 1;
@@ -43,7 +43,7 @@ exports.registerUser = ((req, res) => {
         //res.header('x-auth',token).send(user);
         var token = new Token({ userId: user._id, token: crypto.randomBytes(16).toString('hex') });
         token.save().then(token => {
-          var mailOptions = { from: 'greataditya24@gmail.com', to: user.Email, subject: 'Account Verification Token', text: 'Hello,\n\n' + 'Please verify your account by clicking the link: \nhttp:\/\/' + req.headers.host + '\/confirmation\/' + token.token + '.\n' }
+          var mailOptions = { from: 'greataditya24@gmail.com', to: user.Email, subject: 'Account Verification Token', text: 'Hello,\n\n' + 'Please verify your account by clicking the link: \nhttp:\/\/' + req.headers.host + '\/confirmation\/' + token.token }
 
           transporter.sendMail(mailOptions, function (err) {
             if (err) { return res.status(500).send({ msg: err.message }); }
@@ -77,7 +77,7 @@ exports.Login = ((req, res) => {
   var body = _.pick(req.body, ['Email']);
 
   password = req.body.Password;
-  passord += concatPass;
+  password += concatPass;
 
   // User.findByCredentials(body.Email,body.Password).then((newUser) => {
   User.findOne({ 'Email': body.Email }).then((newUser) => {
@@ -162,7 +162,7 @@ exports.confirmUser = ((req, res) => {
       User.findOneAndUpdate({ _id: token.userId }, { 'isVerified': true }, { new: true }, function (err) {
         if (err) { return res.status(500).send({ msg: err.message }); }
 
-        io.emit('NITJ', { user });//toCollegePort
+        io.getIO().emit('NITJ', { user });//toCollegePort
         res.status(200).send("The account has been verified. Please log in.");
 
         //socket
@@ -202,9 +202,18 @@ exports.filterUsers=((req,res) =>{
   if(req.body.Name)
   query.Name = req.body.Name;
   console.log(query);
+  const userData=[];
   User.find(query).then(users =>{
      
-      res.status(200).send(users);
+    users.forEach(userDoc =>{
+      var body= _.pick(userDoc,['Name','Email','College','Year','Cgpa','WorkExperience']);
+      userData.push(body);
+    })
+    // var body = _.pick(users,['Name','Email']);
+    // const Users= new User(body);
+    //console.log(Users);
+    console.log('userData',userData);
+      res.status(200).json(userData);
   }).catch(err =>{
      res.status(400);
   })

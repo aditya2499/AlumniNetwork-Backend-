@@ -72,10 +72,19 @@ exports.filterPost=((req,res) =>{
 
 exports.getPostByCollege=((req,res) =>{
    console.log('body',req.body);
+   var ColgPost=[];
     Post.find({'College' : req.body.College}).then(collegePost =>{
         console.log('No of posts',collegePost.length);
         collegePost.reverse();
-        res.send(collegePost);
+        for(var i=0;i<collegePost.length;i++)
+        {   var liked= collegePost[i].Likes.includes(ObjectId(req.body._id));
+            ColgPost.push([collegePost[i],liked]);
+        }
+         //   collegePost.forEach(colgPost =>{
+      //      colgPost.isLiked = colgPost.Likes.includes(ObjectId(req.Userid));
+      //   })
+      console.log(ColgPost);
+        res.send(ColgPost);
       });
 });
 

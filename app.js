@@ -43,7 +43,7 @@ mongoose.connect('mongodb://localhost:27017/AluminiBackend',{ useNewUrlParser: t
     var io = socket.init(server);
 
      io.on('connection',(soc) => {
-       console.log('New Connection');
+     console.log('New Connection');
      });
   });
 

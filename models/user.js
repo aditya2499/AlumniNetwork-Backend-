@@ -52,7 +52,7 @@ const userSchema = new Schema({
    },
    Email : {
       type : String,
-   //   required : true
+     // required : true
    },
    tokens:[{
       access:{
@@ -94,9 +94,7 @@ userSchema.methods.findByCredentials = function(Email,Password) {
       return Promise.reject('No User');
 
       return user1;
-
    });
-
 };
 
 module.exports = mongoose.model('User',userSchema);
